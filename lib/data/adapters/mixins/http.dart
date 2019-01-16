@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cinderblock/exceptions.dart';
 import 'package:http/http.dart';
 
 mixin Http {
@@ -15,8 +14,6 @@ mixin Http {
   String checkAndDecode(Response response) {
     if (response.statusCode == 200) {
       return utf8.decode(response.bodyBytes);
-    } else if (response.statusCode == 401) {
-      throw InvalidCredentialsException();
     } else {
       String method = response.request.method;
       String url = response.request.url.toString();
