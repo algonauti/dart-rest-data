@@ -19,4 +19,5 @@ abstract class Adapter {
 
 abstract class Model {
   String get id;
+  String serialize();
 }

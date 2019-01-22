@@ -12,6 +12,11 @@ class JsonApiModel implements Model {
   @override
   String get id => attributes['id'];
 
+  @override
+  String serialize() {
+    return JsonApiSerializer().serialize(jsonApiDocument);
+  }
+
   String idFor(String relationshipName) {
     if (relationships.containsKey(relationshipName)) {
       Map<String, dynamic> data = relationships[relationshipName]['data'];
