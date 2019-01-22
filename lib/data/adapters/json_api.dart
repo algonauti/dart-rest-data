@@ -1,7 +1,6 @@
 import 'package:cinderblock/data/adapters/mixins/http.dart';
 import 'package:cinderblock/data/interfaces.dart';
 import 'package:cinderblock/data/serializers/json_api.dart';
-import 'package:http/http.dart';
 
 class JsonApiAdapter extends Adapter with Http {
   String apiPath;
@@ -12,7 +11,7 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   Future<JsonApiDocument> find(String endpoint, String id) async {
-    final response = await httpGet("$endpoint/$id");
+    final response = await httpGet(path: "$apiPath/$endpoint/$id");
     String payload = checkAndDecode(response);
     return serializer.deserializeOne(payload);
   }
@@ -48,9 +47,5 @@ class JsonApiAdapter extends Adapter with Http {
     } else {
       throw ArgumentError('document must be a JsonApiDocument');
     }
-  }
-
-  Future<Response> httpGet(String relativePath) async {
-    return await client.get(uriFor("$apiPath/$relativePath"), headers: headers);
   }
 }

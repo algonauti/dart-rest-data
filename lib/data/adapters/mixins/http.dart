@@ -1,17 +1,13 @@
 import 'dart:convert';
 
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 mixin Http {
-  final Client client = Client();
   String hostname;
   var headers = Map<String, String>();
 
-  Uri uriFor(String relativePath) {
-    return Uri.https(hostname, relativePath);
-  }
-
-  String checkAndDecode(Response response) {
+  String checkAndDecode(http.Response response) {
     if (response.statusCode == 200) {
       return utf8.decode(response.bodyBytes);
     } else {
@@ -24,5 +20,11 @@ mixin Http {
 
   void addHeader(name, value) {
     headers[name] = value;
+  }
+
+  Future<http.Response> httpGet(
+      {@required String path, Map<String, String> queryParams}) async {
+    var url = Uri.https(hostname, path, queryParams);
+    return await http.get(url, headers: headers);
   }
 }
