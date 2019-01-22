@@ -13,7 +13,7 @@ class JsonApiSerializer implements Serializer {
   @override
   Iterable<JsonApiDocument> deserializeMany(String payload) {
     Map<String, dynamic> parsed = json.decode(payload);
-    return (parsed['data'] as List).map(
+    return (parsed['data'] as Iterable).map(
         (item) => JsonApiDocument(item['attributes'], item['relationships']));
   }
 

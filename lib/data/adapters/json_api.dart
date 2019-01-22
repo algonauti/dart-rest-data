@@ -17,9 +17,10 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future<Iterable<JsonApiDocument>> findAll(String endpoint) {
-    // TODO: implement findAll
-    return null;
+  Future<Iterable<JsonApiDocument>> findAll(String endpoint) async {
+    final response = await httpGet(path: "$apiPath/$endpoint");
+    String payload = checkAndDecode(response);
+    return serializer.deserializeMany(payload);
   }
 
   @override
