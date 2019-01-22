@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 mixin Http {
   final Client client = Client();
   String hostname;
-  Map<String, String> headers;
+  var headers = Map<String, String>();
 
   Uri uriFor(String relativePath) {
     return Uri.https(hostname, relativePath);
@@ -20,5 +20,9 @@ mixin Http {
       throw Exception(
           "[$method $url failed] status=${response.statusCode}, body=${response.body}");
     }
+  }
+
+  void addHeader(name, value) {
+    headers[name] = value;
   }
 }
