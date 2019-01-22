@@ -24,4 +24,12 @@ class JsonApiModel implements Model {
     } else
       return null;
   }
+
+  Iterable<String> idsFor(String relationshipName) {
+    if (relationships.containsKey(relationshipName)) {
+      Iterable<dynamic> data = relationships[relationshipName]['data'];
+      return data.map((record) => record['id']);
+    } else
+      return List<String>();
+  }
 }
