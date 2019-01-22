@@ -25,9 +25,11 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   Future<Iterable<JsonApiDocument>> query(
-      String endpoint, Map<String, String> params) {
-    // TODO: implement query
-    return null;
+      String endpoint, Map<String, String> params) async {
+    final response =
+        await httpGet(path: "$apiPath/$endpoint", queryParams: params);
+    String payload = checkAndDecode(response);
+    return serializer.deserializeMany(payload);
   }
 
   @override
