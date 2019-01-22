@@ -10,6 +10,7 @@ abstract class Adapter {
   Adapter(this.serializer);
 
   Future<dynamic> find(String endpoint, String id);
+  Future<Iterable<dynamic>> findMany(String endpoint, List<String> ids);
   Future<Iterable<dynamic>> findAll(String endpoint);
   Future<Iterable<dynamic>> query(String endpoint, Map<String, String> params);
   Future<dynamic> save(String endpoint, dynamic document);

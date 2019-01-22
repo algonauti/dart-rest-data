@@ -17,6 +17,12 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
+  Future<Iterable<JsonApiDocument>> findMany(
+      String endpoint, Iterable<String> ids) async {
+    return await query(endpoint, {'filter[id]': ids.join(',')});
+  }
+
+  @override
   Future<Iterable<JsonApiDocument>> findAll(String endpoint) async {
     final response = await httpGet(path: "$apiPath/$endpoint");
     String payload = checkAndDecode(response);
