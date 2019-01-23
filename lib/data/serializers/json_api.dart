@@ -6,8 +6,12 @@ class JsonApiSerializer implements Serializer {
   @override
   JsonApiDocument deserializeOne(String payload) {
     Map<String, dynamic> parsed = json.decode(payload);
-    return JsonApiDocument(
-        parsed['data']['attributes'], parsed['data']['relationships']);
+    var attributes = parsed['data']['attributes'];
+    var relationships = parsed['data']['relationships'];
+    if (parsed.containsKey('included'))
+      return JsonApiDocument(attributes, relationships, parsed['included']);
+    else
+      return JsonApiDocument(attributes, relationships);
   }
 
   @override
@@ -35,6 +39,7 @@ class JsonApiSerializer implements Serializer {
 class JsonApiDocument {
   Map<String, dynamic> attributes;
   Map<String, dynamic> relationships;
+  Iterable<dynamic> included;
 
-  JsonApiDocument(this.attributes, this.relationships);
+  JsonApiDocument(this.attributes, this.relationships, [this.included]);
 }
