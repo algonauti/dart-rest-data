@@ -8,6 +8,7 @@ class JsonApiModel implements Model {
 
   Map<String, dynamic> get attributes => jsonApiDocument.attributes;
   Map<String, dynamic> get relationships => jsonApiDocument.relationships;
+  Iterable<dynamic> get included => jsonApiDocument.included;
 
   @override
   String get id => attributes['id'];
@@ -31,5 +32,10 @@ class JsonApiModel implements Model {
       return data.map((record) => record['id']);
     } else
       return List<String>();
+  }
+
+  Iterable<JsonApiDocument> includedDocs(String type) {
+    return included.where((record) => record['type'] == type).map((record) =>
+        JsonApiDocument(record['attributes'], record['relationships']));
   }
 }
