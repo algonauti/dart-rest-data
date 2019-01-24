@@ -40,17 +40,26 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future<JsonApiDocument> save(String endpoint, dynamic document) {
+  Future<JsonApiDocument> save(String endpoint, dynamic document) async {
     if (document is JsonApiDocument) {
-      // TODO: implement save
-      return null;
+      var response;
+      if (document.isNew) {
+        response = await httpPost(
+            path: "$apiPath/$endpoint", body: serializer.serialize(document));
+      } else {
+        response = await httpPatch(
+            path: "$apiPath/$endpoint/${document.id}",
+            body: serializer.serialize(document));
+      }
+      String payload = checkAndDecode(response);
+      return serializer.deserializeOne(payload);
     } else {
       throw ArgumentError('document must be a JsonApiDocument');
     }
   }
 
   @override
-  Future delete(String endpoint, dynamic document) {
+  Future delete(String endpoint, dynamic document) async {
     if (document is JsonApiDocument) {
       // TODO: implement delete
       return null;

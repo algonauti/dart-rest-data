@@ -16,6 +16,8 @@ class JsonApiModel implements Model {
   @override
   String get type => jsonApiDoc.type;
 
+  bool get isNew => jsonApiDoc.isNew;
+
   @override
   String serialize() {
     return JsonApiSerializer().serialize(jsonApiDoc);
