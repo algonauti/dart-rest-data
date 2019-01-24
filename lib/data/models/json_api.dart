@@ -11,7 +11,7 @@ class JsonApiModel implements Model {
   Iterable<dynamic> get included => jsonApiDocument.included;
 
   @override
-  String get id => attributes['id'];
+  String get id => jsonApiDocument.id;
 
   @override
   String serialize() {

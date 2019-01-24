@@ -6,19 +6,20 @@ class JsonApiSerializer implements Serializer {
   @override
   JsonApiDocument deserializeOne(String payload) {
     Map<String, dynamic> parsed = json.decode(payload);
-    var attributes = parsed['data']['attributes'];
-    var relationships = parsed['data']['relationships'];
+    var data = parsed['data'];
     if (parsed.containsKey('included'))
-      return JsonApiDocument(attributes, relationships, parsed['included']);
+      return JsonApiDocument(data['id'], data['type'], data['attributes'],
+          data['relationships'], parsed['included']);
     else
-      return JsonApiDocument(attributes, relationships);
+      return JsonApiDocument(
+          data['id'], data['type'], data['attributes'], data['relationships']);
   }
 
   @override
   Iterable<JsonApiDocument> deserializeMany(String payload) {
     Map<String, dynamic> parsed = json.decode(payload);
-    return (parsed['data'] as Iterable).map(
-        (item) => JsonApiDocument(item['attributes'], item['relationships']));
+    return (parsed['data'] as Iterable).map((item) => JsonApiDocument(
+        item['id'], item['type'], item['attributes'], item['relationships']));
   }
 
   @override
@@ -37,9 +38,12 @@ class JsonApiSerializer implements Serializer {
 }
 
 class JsonApiDocument {
+  String id;
+  String type;
   Map<String, dynamic> attributes;
   Map<String, dynamic> relationships;
   Iterable<dynamic> included;
 
-  JsonApiDocument(this.attributes, this.relationships, [this.included]);
+  JsonApiDocument(this.id, this.type, this.attributes, this.relationships,
+      [this.included]);
 }
