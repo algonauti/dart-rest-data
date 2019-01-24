@@ -14,6 +14,9 @@ class JsonApiModel implements Model {
   String get id => jsonApiDocument.id;
 
   @override
+  String get type => jsonApiDocument.type;
+
+  @override
   String serialize() {
     return JsonApiSerializer().serialize(jsonApiDocument);
   }
