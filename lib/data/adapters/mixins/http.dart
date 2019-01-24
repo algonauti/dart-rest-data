@@ -27,4 +27,14 @@ mixin Http {
     var url = Uri.https(hostname, path, queryParams);
     return await http.get(url, headers: headers);
   }
+
+  Future<http.Response> httpPost({@required String path, String body}) async {
+    var url = Uri.https(hostname, path);
+    return await http.post(url, headers: headers, body: body);
+  }
+
+  Future<http.Response> httpPatch({@required String path, String body}) async {
+    var url = Uri.https(hostname, path);
+    return await http.patch(url, headers: headers, body: body);
+  }
 }
