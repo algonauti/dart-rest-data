@@ -27,6 +27,8 @@ class JsonApiSerializer implements Serializer {
     if (document is JsonApiDocument) {
       return json.encode({
         'data': {
+          'id': document.id,
+          'type': document.type,
           'attributes': document.attributes,
           'relationships': document.relationships
         }
