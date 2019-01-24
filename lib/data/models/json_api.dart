@@ -2,23 +2,23 @@ import 'package:cinderblock/data/interfaces.dart';
 import 'package:cinderblock/data/serializers/json_api.dart';
 
 class JsonApiModel implements Model {
-  JsonApiDocument jsonApiDocument;
+  JsonApiDocument jsonApiDoc;
 
-  JsonApiModel(this.jsonApiDocument);
+  JsonApiModel(this.jsonApiDoc);
 
-  Map<String, dynamic> get attributes => jsonApiDocument.attributes;
-  Map<String, dynamic> get relationships => jsonApiDocument.relationships;
-  Iterable<dynamic> get included => jsonApiDocument.included;
-
-  @override
-  String get id => jsonApiDocument.id;
+  Map<String, dynamic> get attributes => jsonApiDoc.attributes;
+  Map<String, dynamic> get relationships => jsonApiDoc.relationships;
+  Iterable<dynamic> get included => jsonApiDoc.included;
 
   @override
-  String get type => jsonApiDocument.type;
+  String get id => jsonApiDoc.id;
+
+  @override
+  String get type => jsonApiDoc.type;
 
   @override
   String serialize() {
-    return JsonApiSerializer().serialize(jsonApiDocument);
+    return JsonApiSerializer().serialize(jsonApiDoc);
   }
 
   String idFor(String relationshipName) {
