@@ -39,6 +39,16 @@ class JsonApiModel implements Model {
 
   Iterable<JsonApiDocument> includedDocs(String type) {
     return included.where((record) => record['type'] == type).map((record) =>
-        JsonApiDocument(record['attributes'], record['relationships']));
+        JsonApiDocument(record['id'], record['type'], record['attributes'],
+            record['relationships']));
+  }
+
+  void setHasOne(String relationshipName, JsonApiModel model) {
+    if (relationships.containsKey(relationshipName)) {
+      relationships[relationshipName]['data']['id'] = model.id;
+    } else
+      relationships[relationshipName] = {
+        'data': {'id': model.id, 'type': model.type}
+      };
   }
 }
