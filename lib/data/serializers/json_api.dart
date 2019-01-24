@@ -49,5 +49,7 @@ class JsonApiDocument {
   JsonApiDocument(this.id, this.type, this.attributes, this.relationships,
       [this.included]);
 
+  JsonApiDocument.create(this.type, this.attributes, [this.relationships]);
+
   bool get isNew => id == null;
 }
