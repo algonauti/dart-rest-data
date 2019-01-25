@@ -5,7 +5,7 @@ import 'package:cinderblock/data/interfaces.dart';
 class JsonApiSerializer implements Serializer {
   @override
   JsonApiDocument deserializeOne(String payload) {
-    Map<String, dynamic> parsed = json.decode(payload);
+    Map<String, dynamic> parsed = parse(payload);
     var data = parsed['data'];
     if (parsed.containsKey('included'))
       return JsonApiDocument(data['id'], data['type'], data['attributes'],
@@ -17,7 +17,7 @@ class JsonApiSerializer implements Serializer {
 
   @override
   Iterable<JsonApiDocument> deserializeMany(String payload) {
-    Map<String, dynamic> parsed = json.decode(payload);
+    Map<String, dynamic> parsed = parse(payload);
     return (parsed['data'] as Iterable).map((item) => JsonApiDocument(
         item['id'], item['type'], item['attributes'], item['relationships']));
   }
@@ -36,6 +36,10 @@ class JsonApiSerializer implements Serializer {
     } else {
       throw ArgumentError('document must be a JsonApiDocument');
     }
+  }
+
+  dynamic parse(String raw) {
+    return json.decode(raw);
   }
 }
 
