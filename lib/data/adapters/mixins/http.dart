@@ -47,6 +47,11 @@ mixin Http {
     var url = Uri.https(hostname, path);
     return await http.patch(url, headers: headers, body: body);
   }
+
+  Future<http.Response> httpDelete(String path) async {
+    var url = Uri.https(hostname, path);
+    return await http.delete(url, headers: headers);
+  }
 }
 
 class HttpException implements Exception {
