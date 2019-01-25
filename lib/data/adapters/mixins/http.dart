@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
 
 mixin Http {
   String hostname;
@@ -22,18 +21,18 @@ mixin Http {
     headers[name] = value;
   }
 
-  Future<http.Response> httpGet(
-      {@required String path, Map<String, String> queryParams}) async {
+  Future<http.Response> httpGet(String path,
+      {Map<String, String> queryParams}) async {
     var url = Uri.https(hostname, path, queryParams);
     return await http.get(url, headers: headers);
   }
 
-  Future<http.Response> httpPost({@required String path, String body}) async {
+  Future<http.Response> httpPost(String path, {String body}) async {
     var url = Uri.https(hostname, path);
     return await http.post(url, headers: headers, body: body);
   }
 
-  Future<http.Response> httpPatch({@required String path, String body}) async {
+  Future<http.Response> httpPatch(String path, {String body}) async {
     var url = Uri.https(hostname, path);
     return await http.patch(url, headers: headers, body: body);
   }

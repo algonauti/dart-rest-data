@@ -12,7 +12,7 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   Future<JsonApiDocument> find(String endpoint, String id) async {
-    final response = await httpGet(path: "$apiPath/$endpoint/$id");
+    final response = await httpGet("$apiPath/$endpoint/$id");
     String payload = checkAndDecode(response);
     return serializer.deserializeOne(payload);
   }
@@ -25,7 +25,7 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   Future<Iterable<JsonApiDocument>> findAll(String endpoint) async {
-    final response = await httpGet(path: "$apiPath/$endpoint");
+    final response = await httpGet("$apiPath/$endpoint");
     String payload = checkAndDecode(response);
     return serializer.deserializeMany(payload);
   }
@@ -33,8 +33,7 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   Future<Iterable<JsonApiDocument>> query(
       String endpoint, Map<String, String> params) async {
-    final response =
-        await httpGet(path: "$apiPath/$endpoint", queryParams: params);
+    final response = await httpGet("$apiPath/$endpoint", queryParams: params);
     String payload = checkAndDecode(response);
     return serializer.deserializeMany(payload);
   }
@@ -44,11 +43,10 @@ class JsonApiAdapter extends Adapter with Http {
     if (document is JsonApiDocument) {
       var response;
       if (document.isNew) {
-        response = await httpPost(
-            path: "$apiPath/$endpoint", body: serializer.serialize(document));
+        response = await httpPost("$apiPath/$endpoint",
+            body: serializer.serialize(document));
       } else {
-        response = await httpPatch(
-            path: "$apiPath/$endpoint/${document.id}",
+        response = await httpPatch("$apiPath/$endpoint/${document.id}",
             body: serializer.serialize(document));
       }
       String payload = checkAndDecode(response);
