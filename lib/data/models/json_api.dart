@@ -27,6 +27,8 @@ class JsonApiModel implements Model {
 
   bool get isNew => jsonApiDoc.isNew;
 
+  bool get hasErrors => errors.isNotEmpty;
+
   @override
   String serialize() {
     return JsonApiSerializer().serialize(jsonApiDoc);
@@ -52,6 +54,13 @@ class JsonApiModel implements Model {
     return included.where((record) => record['type'] == type).map((record) =>
         JsonApiDocument(record['id'], record['type'], record['attributes'],
             record['relationships']));
+  }
+
+  Iterable<String> errorsFor(String attributeName) {
+    return errors
+        .where((error) =>
+            error['source']['pointer'] == "/data/attributes/$attributeName")
+        .map((error) => error['detail']);
   }
 
   void setHasOne(String relationshipName, JsonApiModel model) {
