@@ -1,4 +1,5 @@
 import 'package:cinderblock/data/adapters/mixins/http.dart';
+import 'package:cinderblock/data/exceptions.dart';
 import 'package:cinderblock/data/interfaces.dart';
 import 'package:cinderblock/data/serializers/json_api.dart';
 
@@ -41,16 +42,26 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   Future<JsonApiDocument> save(String endpoint, dynamic document) async {
     if (document is JsonApiDocument) {
-      var response;
-      if (document.isNew) {
-        response = await httpPost("$apiPath/$endpoint",
-            body: serializer.serialize(document));
-      } else {
-        response = await httpPatch("$apiPath/$endpoint/${document.id}",
-            body: serializer.serialize(document));
+      try {
+        var response;
+        if (document.isNew) {
+          response = await httpPost("$apiPath/$endpoint",
+              body: serializer.serialize(document));
+        } else {
+          response = await httpPatch("$apiPath/$endpoint/${document.id}",
+              body: serializer.serialize(document));
+        }
+        String payload = checkAndDecode(response);
+        return serializer.deserializeOne(payload);
+      } on UnprocessableException catch (e) {
+        Map parsed = (serializer as JsonApiSerializer).parse(e.responseBody);
+        if (parsed.containsKey('errors')) {
+          document.errors = parsed['errors'];
+          throw InvalidRecordException();
+        } else {
+          throw e;
+        }
       }
-      String payload = checkAndDecode(response);
-      return serializer.deserializeOne(payload);
     } else {
       throw ArgumentError('document must be a JsonApiDocument');
     }
