@@ -8,10 +8,7 @@ class JsonApiModel implements Model {
 
   JsonApiModel.create(String type, Map<String, dynamic> attributes,
       [Map<String, dynamic> relationships]) {
-    if (relationships == null)
-      jsonApiDoc = JsonApiDocument.create(type, attributes);
-    else
-      jsonApiDoc = JsonApiDocument.create(type, attributes, relationships);
+    jsonApiDoc = JsonApiDocument.create(type, attributes, relationships);
   }
 
   Map<String, dynamic> get attributes => jsonApiDoc.attributes;

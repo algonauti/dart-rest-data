@@ -7,12 +7,8 @@ class JsonApiSerializer implements Serializer {
   JsonApiDocument deserializeOne(String payload) {
     Map<String, dynamic> parsed = parse(payload);
     var data = parsed['data'];
-    if (parsed.containsKey('included'))
-      return JsonApiDocument(data['id'], data['type'], data['attributes'],
-          data['relationships'], parsed['included']);
-    else
-      return JsonApiDocument(
-          data['id'], data['type'], data['attributes'], data['relationships']);
+    return JsonApiDocument(data['id'], data['type'], data['attributes'],
+        data['relationships'], parsed['included']);
   }
 
   @override
