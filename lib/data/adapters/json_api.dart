@@ -41,39 +41,37 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   Future<JsonApiDocument> save(String endpoint, dynamic document) async {
-    if (document is JsonApiDocument) {
-      try {
-        var response;
-        if (document.isNew) {
-          response = await httpPost("$apiPath/$endpoint",
-              body: serializer.serialize(document));
-        } else {
-          response = await httpPatch("$apiPath/$endpoint/${document.id}",
-              body: serializer.serialize(document));
-        }
-        String payload = checkAndDecode(response);
-        return serializer.deserializeOne(payload);
-      } on UnprocessableException catch (e) {
-        Map parsed = (serializer as JsonApiSerializer).parse(e.responseBody);
-        if (parsed.containsKey('errors')) {
-          document.errors = parsed['errors'];
-          throw InvalidRecordException();
-        } else {
-          throw e;
-        }
-      }
-    } else {
+    if (document is! JsonApiDocument) {
       throw ArgumentError('document must be a JsonApiDocument');
+    }
+    try {
+      var response;
+      if (document.isNew) {
+        response = await httpPost("$apiPath/$endpoint",
+            body: serializer.serialize(document));
+      } else {
+        response = await httpPatch("$apiPath/$endpoint/${document.id}",
+            body: serializer.serialize(document));
+      }
+      String payload = checkAndDecode(response);
+      return serializer.deserializeOne(payload);
+    } on UnprocessableException catch (e) {
+      Map parsed = (serializer as JsonApiSerializer).parse(e.responseBody);
+      if (parsed.containsKey('errors')) {
+        document.errors = parsed['errors'];
+        throw InvalidRecordException();
+      } else {
+        throw e;
+      }
     }
   }
 
   @override
   Future delete(String endpoint, dynamic document) async {
-    if (document is JsonApiDocument) {
-      final response = await httpDelete("$apiPath/$endpoint/${document.id}");
-      checkAndDecode(response);
-    } else {
+    if (document is! JsonApiDocument) {
       throw ArgumentError('document must be a JsonApiDocument');
     }
+    final response = await httpDelete("$apiPath/$endpoint/${document.id}");
+    checkAndDecode(response);
   }
 }
