@@ -1,0 +1,26 @@
+stages:
+  - test
+  - build
+  - deploy
+
+unit-test:
+  image: algonauti/flutter
+  stage: test
+  script:
+    - echo $TEST_PROFILE | base64 --decode > .env
+    - flutter test --coverage
+    - lcov --list coverage/lcov.info
+
+build-apk:
+  image: algonauti/flutter
+  stage: build
+  when: manual
+  script:
+    - echo $DEBUG_PROFILE | base64 --decode > .env
+    - flutter build apk
+    - mv build/app/outputs/apk/release/app-release.apk cinderblock-app-release.apk
+  artifacts:
+    name: "cinderblock-app-release"
+    expire_in: 1 week
+    paths:
+      - cinderblock-app-release.apk
