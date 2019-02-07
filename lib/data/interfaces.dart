@@ -14,7 +14,7 @@ abstract class Adapter {
   Future<Iterable<Object>> findAll(String endpoint);
   Future<Iterable<Object>> query(String endpoint, Map<String, String> params);
   Future<Object> save(String endpoint, Object document);
-  Future delete(String endpoint, Object document);
+  Future<void> delete(String endpoint, Object document);
 }
 
 abstract class Model {

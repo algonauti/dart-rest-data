@@ -67,7 +67,7 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future delete(String endpoint, Object document) async {
+  Future<void> delete(String endpoint, Object document) async {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
       final response = await httpDelete("$apiPath/$endpoint/${jsonApiDoc.id}");
