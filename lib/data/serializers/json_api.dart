@@ -19,18 +19,20 @@ class JsonApiSerializer implements Serializer {
   }
 
   @override
-  String serialize(dynamic document) {
-    if (document is! JsonApiDocument) {
+  String serialize(Object document) {
+    try {
+      JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
+      return json.encode({
+        'data': {
+          'id': jsonApiDoc.id,
+          'type': jsonApiDoc.type,
+          'attributes': jsonApiDoc.attributes,
+          'relationships': jsonApiDoc.relationships
+        }
+      });
+    } on CastError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
-    return json.encode({
-      'data': {
-        'id': document.id,
-        'type': document.type,
-        'attributes': document.attributes,
-        'relationships': document.relationships
-      }
-    });
   }
 
   dynamic parse(String raw) {
