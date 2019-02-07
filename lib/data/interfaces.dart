@@ -1,7 +1,7 @@
 abstract class Serializer {
-  String serialize(dynamic document);
-  dynamic deserializeOne(String payload);
-  Iterable<dynamic> deserializeMany(String payload);
+  String serialize(Object document);
+  Object deserialize(String payload);
+  Iterable<Object> deserializeMany(String payload);
 }
 
 abstract class Adapter {
@@ -9,12 +9,12 @@ abstract class Adapter {
 
   Adapter(this.serializer);
 
-  Future<dynamic> find(String endpoint, String id);
-  Future<Iterable<dynamic>> findMany(String endpoint, List<String> ids);
-  Future<Iterable<dynamic>> findAll(String endpoint);
-  Future<Iterable<dynamic>> query(String endpoint, Map<String, String> params);
-  Future<dynamic> save(String endpoint, dynamic document);
-  Future delete(String endpoint, dynamic document);
+  Future<Object> find(String endpoint, String id);
+  Future<Iterable<Object>> findMany(String endpoint, Iterable<String> ids);
+  Future<Iterable<Object>> findAll(String endpoint);
+  Future<Iterable<Object>> query(String endpoint, Map<String, String> params);
+  Future<Object> save(String endpoint, Object document);
+  Future<void> delete(String endpoint, Object document);
 }
 
 abstract class Model {
