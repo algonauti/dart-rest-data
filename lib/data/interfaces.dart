@@ -1,6 +1,6 @@
 abstract class Serializer {
   String serialize(dynamic document);
-  dynamic deserializeOne(String payload);
+  dynamic deserialize(String payload);
   Iterable<dynamic> deserializeMany(String payload);
 }
 

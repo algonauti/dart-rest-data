@@ -15,7 +15,7 @@ class JsonApiAdapter extends Adapter with Http {
   Future<JsonApiDocument> find(String endpoint, String id) async {
     final response = await httpGet("$apiPath/$endpoint/$id");
     String payload = checkAndDecode(response);
-    return serializer.deserializeOne(payload);
+    return serializer.deserialize(payload);
   }
 
   @override
@@ -54,7 +54,7 @@ class JsonApiAdapter extends Adapter with Http {
             body: serializer.serialize(document));
       }
       String payload = checkAndDecode(response);
-      return serializer.deserializeOne(payload);
+      return serializer.deserialize(payload);
     } on UnprocessableException catch (e) {
       Map parsed = (serializer as JsonApiSerializer).parse(e.responseBody);
       if (parsed.containsKey('errors')) {

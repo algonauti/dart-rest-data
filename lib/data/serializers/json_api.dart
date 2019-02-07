@@ -4,7 +4,7 @@ import 'package:cinderblock/data/interfaces.dart';
 
 class JsonApiSerializer implements Serializer {
   @override
-  JsonApiDocument deserializeOne(String payload) {
+  JsonApiDocument deserialize(String payload) {
     Map<String, dynamic> parsed = parse(payload);
     var data = parsed['data'];
     return JsonApiDocument(data['id'], data['type'], data['attributes'],
