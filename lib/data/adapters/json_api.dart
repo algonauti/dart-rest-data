@@ -14,7 +14,23 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future<JsonApiDocument> find(String endpoint, String id) async {
+  Future<JsonApiDocument> find(String endpoint, String id,
+      {bool forceReload = false}) async {
+    if (forceReload == true) return _fetchAndCache(endpoint, id);
+    JsonApiDocument cached = peek(endpoint, id);
+    if (cached != null)
+      return cached;
+    else
+      return _fetchAndCache(endpoint, id);
+  }
+
+  Future<JsonApiDocument> _fetchAndCache(String endpoint, String id) async {
+    JsonApiDocument fetched = await _fetch(endpoint, id);
+    cache(endpoint, fetched);
+    return fetched;
+  }
+
+  Future<JsonApiDocument> _fetch(String endpoint, String id) async {
     final response = await httpGet("$apiPath/$endpoint/$id");
     String payload = checkAndDecode(response);
     return serializer.deserialize(payload);
