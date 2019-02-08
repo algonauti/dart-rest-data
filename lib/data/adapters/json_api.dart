@@ -38,8 +38,20 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   Future<Iterable<JsonApiDocument>> findMany(
-      String endpoint, Iterable<String> ids) async {
-    return await query(endpoint, {'filter[id]': ids.join(',')});
+      String endpoint, Iterable<String> ids,
+      {bool forceReload = false}) async {
+    if (forceReload == true) return await query(endpoint, _idsParam(ids));
+    List<JsonApiDocument> cached = peekMany(endpoint, ids).toList();
+    if (cached.length != ids.length) {
+      List<String> cachedIds = cached.map((doc) => doc.id);
+      Iterable<String> loadableIds = ids.where((id) => !cachedIds.contains(id));
+      cached.addAll(await query(endpoint, _idsParam(loadableIds)));
+    }
+    return cached;
+  }
+
+  Map<String, String> _idsParam(Iterable<String> ids) {
+    return {'filter[id]': ids.join(',')};
   }
 
   @override
