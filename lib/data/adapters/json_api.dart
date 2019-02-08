@@ -5,9 +5,11 @@ import 'package:cinderblock/data/serializers/json_api.dart';
 
 class JsonApiAdapter extends Adapter with Http {
   String apiPath;
+  Map<String, JsonApiDocument> _cache;
 
   JsonApiAdapter(hostname, this.apiPath) : super(JsonApiSerializer()) {
     this.hostname = hostname;
+    _cache = Map<String, JsonApiDocument>();
     addHeader('Content-Type', 'application/json; charset=utf-8');
   }
 
@@ -75,5 +77,40 @@ class JsonApiAdapter extends Adapter with Http {
     } on CastError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
+  }
+
+  @override
+  void cache(String endpoint, Object document) {
+    try {
+      JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
+      _cache["$endpoint:${jsonApiDoc.id}"] = jsonApiDoc;
+    } on CastError {
+      throw ArgumentError('document must be a JsonApiDocument');
+    }
+  }
+
+  @override
+  void unCache(String endpoint, Object document) {
+    try {
+      JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
+      _cache.remove("$endpoint:${jsonApiDoc.id}");
+    } on CastError {
+      throw ArgumentError('document must be a JsonApiDocument');
+    }
+  }
+
+  @override
+  void cacheMany(String endpoint, Iterable<Object> documents) {
+    documents.forEach((document) => cache(endpoint, document));
+  }
+
+  @override
+  JsonApiDocument peek(String endpoint, String id) {
+    return _cache["$endpoint:$id"];
+  }
+
+  @override
+  Iterable<JsonApiDocument> peekMany(String endpoint, Iterable<String> ids) {
+    return ids.map((id) => peek(endpoint, id)).where((doc) => doc != null);
   }
 }
