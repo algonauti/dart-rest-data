@@ -54,7 +54,9 @@ class JsonApiAdapter extends Adapter with Http {
       String endpoint, Map<String, String> params) async {
     final response = await httpGet("$apiPath/$endpoint", queryParams: params);
     String payload = checkAndDecode(response);
-    return serializer.deserializeMany(payload);
+    Iterable<JsonApiDocument> fetched = serializer.deserializeMany(payload);
+    cacheMany(endpoint, fetched);
+    return fetched;
   }
 
   @override
