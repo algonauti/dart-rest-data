@@ -86,7 +86,9 @@ class JsonApiAdapter extends Adapter with Http {
             body: serializer.serialize(document));
       }
       String payload = checkAndDecode(response);
-      return serializer.deserialize(payload);
+      JsonApiDocument saved = serializer.deserialize(payload);
+      cache(endpoint, saved);
+      return saved;
     } on UnprocessableException catch (e) {
       Map parsed = (serializer as JsonApiSerializer).parse(e.responseBody);
       if (parsed.containsKey('errors')) {
