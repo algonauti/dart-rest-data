@@ -53,3 +53,21 @@ class JsonApiModel implements Model {
       };
   }
 }
+
+abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
+  JsonApiManyDocument manyDoc;
+  Iterable<T> models;
+
+  JsonApiManyModel(this.manyDoc);
+
+  @override
+  Iterator<T> get iterator => models.iterator;
+
+  int get currentPage => manyDoc.meta['current_page'];
+  int get pageSize => manyDoc.meta['page_size'];
+  int get totalPages => manyDoc.meta['total_pages'];
+  int get totalCount => manyDoc.meta['total_count'];
+
+  Iterable<JsonApiDocument> includedDocs(String type) =>
+      manyDoc.includedDocs(type);
+}
