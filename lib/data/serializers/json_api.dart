@@ -54,4 +54,20 @@ class JsonApiDocument {
   JsonApiDocument.create(this.type, this.attributes, [this.relationships]);
 
   bool get isNew => id == null;
+
+  String idFor(String relationshipName) {
+    if (relationships.containsKey(relationshipName)) {
+      Map<String, dynamic> data = relationships[relationshipName]['data'];
+      return data['id'];
+    } else
+      return null;
+  }
+
+  Iterable<String> idsFor(String relationshipName) {
+    if (relationships.containsKey(relationshipName)) {
+      Iterable<dynamic> data = relationships[relationshipName]['data'];
+      return data.map((record) => record['id']);
+    } else
+      return List<String>();
+  }
 }

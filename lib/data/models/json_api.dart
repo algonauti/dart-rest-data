@@ -27,25 +27,12 @@ class JsonApiModel implements Model {
   bool get hasErrors => errors.isNotEmpty;
 
   @override
-  String serialize() {
-    return JsonApiSerializer().serialize(jsonApiDoc);
-  }
+  String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
 
-  String idFor(String relationshipName) {
-    if (relationships.containsKey(relationshipName)) {
-      Map<String, dynamic> data = relationships[relationshipName]['data'];
-      return data['id'];
-    } else
-      return null;
-  }
+  String idFor(String relationshipName) => jsonApiDoc.idFor(relationshipName);
 
-  Iterable<String> idsFor(String relationshipName) {
-    if (relationships.containsKey(relationshipName)) {
-      Iterable<dynamic> data = relationships[relationshipName]['data'];
-      return data.map((record) => record['id']);
-    } else
-      return List<String>();
-  }
+  Iterable<String> idsFor(String relationshipName) =>
+      jsonApiDoc.idsFor(relationshipName);
 
   Iterable<JsonApiDocument> includedDocs(String type) {
     return included.where((record) => record['type'] == type).map((record) =>
