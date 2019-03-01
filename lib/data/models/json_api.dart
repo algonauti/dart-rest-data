@@ -34,11 +34,8 @@ class JsonApiModel implements Model {
   Iterable<String> idsFor(String relationshipName) =>
       jsonApiDoc.idsFor(relationshipName);
 
-  Iterable<JsonApiDocument> includedDocs(String type) {
-    return included.where((record) => record['type'] == type).map((record) =>
-        JsonApiDocument(record['id'], record['type'], record['attributes'],
-            record['relationships']));
-  }
+  Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) =>
+      jsonApiDoc.includedDocs(type, ids);
 
   Iterable<String> errorsFor(String attributeName) {
     return errors

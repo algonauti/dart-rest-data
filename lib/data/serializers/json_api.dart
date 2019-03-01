@@ -70,4 +70,12 @@ class JsonApiDocument {
     } else
       return List<String>();
   }
+
+  Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) {
+    ids ??= idsFor(type);
+    return included
+        .where((record) => record['type'] == type && ids.contains(record['id']))
+        .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
+            record['type'], record['attributes'], record['relationships']));
+  }
 }
