@@ -12,10 +12,15 @@ class JsonApiSerializer implements Serializer {
   }
 
   @override
-  Iterable<JsonApiDocument> deserializeMany(String payload) {
+  JsonApiManyDocument deserializeMany(String payload) {
     Map<String, dynamic> parsed = parse(payload);
-    return (parsed['data'] as Iterable).map((item) => JsonApiDocument(
-        item['id'], item['type'], item['attributes'], item['relationships']));
+    var docs = (parsed['data'] as Iterable).map((item) => JsonApiDocument(
+        item['id'],
+        item['type'],
+        item['attributes'],
+        item['relationships'],
+        parsed['included']));
+    return JsonApiManyDocument(docs, parsed['included'], parsed['meta']);
   }
 
   @override
@@ -77,5 +82,37 @@ class JsonApiDocument {
         .where((record) => record['type'] == type && ids.contains(record['id']))
         .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
             record['type'], record['attributes'], record['relationships']));
+  }
+}
+
+class JsonApiManyDocument extends Iterable<JsonApiDocument> {
+  Iterable<JsonApiDocument> docs;
+  Iterable<dynamic> included;
+  Map<String, dynamic> meta;
+
+  JsonApiManyDocument(this.docs, [this.included, this.meta]) {
+    meta ??= Map<String, dynamic>();
+  }
+
+  @override
+  Iterator<JsonApiDocument> get iterator => docs.iterator;
+
+  JsonApiManyDocument merge(JsonApiManyDocument other) {
+    docs = docs.followedBy(other);
+    return this;
+  }
+
+  Iterable<String> idsForHasOne(String relationshipName) {
+    return docs.map((doc) => doc.idFor(relationshipName));
+  }
+
+  Iterable<String> idsForHasMany(String relationshipName) {
+    return docs.map((doc) => doc.idsFor(relationshipName)).expand((ids) => ids);
+  }
+
+  Iterable<JsonApiDocument> includedDocs(String type) {
+    return included.where((record) => record['type'] == type).map((record) =>
+        JsonApiDocument(record['id'], record['type'], record['attributes'],
+            record['relationships']));
   }
 }

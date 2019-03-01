@@ -37,17 +37,16 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future<Iterable<JsonApiDocument>> findMany(
-      String endpoint, Iterable<String> ids,
+  Future<JsonApiManyDocument> findMany(String endpoint, Iterable<String> ids,
       {bool forceReload = false}) async {
     if (forceReload == true) return await query(endpoint, _idsParam(ids));
-    List<JsonApiDocument> cached = peekMany(endpoint, ids).toList();
+    JsonApiManyDocument cached = peekMany(endpoint, ids);
     if (cached.length != ids.length) {
-      List<String> cachedIds = cached.map((doc) => doc.id).toList();
+      Iterable<String> cachedIds = cached.map((doc) => doc.id);
       Iterable<String> loadableIds = ids.where((id) => !cachedIds.contains(id));
-      cached.addAll(await query(endpoint, _idsParam(loadableIds)));
-    }
-    return cached;
+      return (await query(endpoint, _idsParam(loadableIds))).merge(cached);
+    } else
+      return cached;
   }
 
   Map<String, String> _idsParam(Iterable<String> ids) {
@@ -55,14 +54,14 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future<Iterable<JsonApiDocument>> findAll(String endpoint) async {
+  Future<JsonApiManyDocument> findAll(String endpoint) async {
     final response = await httpGet("$apiPath/$endpoint");
     String payload = checkAndDecode(response);
     return serializer.deserializeMany(payload);
   }
 
   @override
-  Future<Iterable<JsonApiDocument>> query(
+  Future<JsonApiManyDocument> query(
       String endpoint, Map<String, String> params) async {
     final response = await httpGet("$apiPath/$endpoint", queryParams: params);
     String payload = checkAndDecode(response);
@@ -138,12 +137,10 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  JsonApiDocument peek(String endpoint, String id) {
-    return _cache["$endpoint:$id"];
-  }
+  JsonApiDocument peek(String endpoint, String id) => _cache["$endpoint:$id"];
 
   @override
-  Iterable<JsonApiDocument> peekMany(String endpoint, Iterable<String> ids) {
-    return ids.map((id) => peek(endpoint, id)).where((doc) => doc != null);
-  }
+  JsonApiManyDocument peekMany(String endpoint, Iterable<String> ids) =>
+      JsonApiManyDocument(
+          ids.map((id) => peek(endpoint, id)).where((doc) => doc != null));
 }
