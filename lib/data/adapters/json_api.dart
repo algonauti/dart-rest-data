@@ -44,7 +44,9 @@ class JsonApiAdapter extends Adapter with Http {
     if (cached.length != ids.length) {
       Iterable<String> cachedIds = cached.map((doc) => doc.id);
       Iterable<String> loadableIds = ids.where((id) => !cachedIds.contains(id));
-      return (await query(endpoint, _idsParam(loadableIds))).merge(cached);
+      JsonApiManyDocument loaded =
+          await query(endpoint, _idsParam(loadableIds));
+      return loaded.merge(cached);
     } else
       return cached;
   }
