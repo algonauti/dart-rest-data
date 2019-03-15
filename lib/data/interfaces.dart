@@ -22,6 +22,7 @@ abstract class Adapter {
   void cacheMany(String endpoint, Iterable<Object> documents);
   Object peek(String endpoint, String id);
   Iterable<Object> peekMany(String endpoint, Iterable<String> ids);
+  Iterable<Object> peekAll(String endpoint);
 }
 
 abstract class Model {
