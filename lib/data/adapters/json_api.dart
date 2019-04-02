@@ -59,7 +59,7 @@ class JsonApiAdapter extends Adapter with Http {
   Future<JsonApiManyDocument> findAll(String endpoint) async {
     final response = await httpGet("$apiPath/$endpoint");
     String payload = checkAndDecode(response);
-    return serializer.deserializeMany(payload);
+    return _deserializeAndCacheMany(payload, endpoint);
   }
 
   @override
@@ -67,7 +67,12 @@ class JsonApiAdapter extends Adapter with Http {
       String endpoint, Map<String, String> params) async {
     final response = await httpGet("$apiPath/$endpoint", queryParams: params);
     String payload = checkAndDecode(response);
-    Iterable<JsonApiDocument> fetched = serializer.deserializeMany(payload);
+    return _deserializeAndCacheMany(payload, endpoint);
+  }
+
+  JsonApiManyDocument _deserializeAndCacheMany(
+      String payload, String endpoint) {
+    JsonApiManyDocument fetched = serializer.deserializeMany(payload);
     cacheMany(endpoint, fetched);
     return fetched;
   }
