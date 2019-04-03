@@ -53,8 +53,9 @@ class JsonApiModel implements Model {
       };
   }
 
-  DateTime toDateTime(String value) => DateTime.parse(value);
-  String toUtcIsoString(DateTime value) => value.toUtc().toIso8601String();
+  static DateTime toDateTime(String value) => DateTime.parse(value);
+  static String toUtcIsoString(DateTime value) =>
+      value.toUtc().toIso8601String();
 }
 
 abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
