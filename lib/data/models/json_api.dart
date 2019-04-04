@@ -30,6 +30,8 @@ class JsonApiModel implements Model {
   String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
 
   String idFor(String relationshipName) => jsonApiDoc.idFor(relationshipName);
+  String typeFor(String relationshipName) =>
+      jsonApiDoc.typeFor(relationshipName);
 
   Iterable<String> idsFor(String relationshipName) =>
       jsonApiDoc.idsFor(relationshipName);

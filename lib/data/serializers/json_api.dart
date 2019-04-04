@@ -61,10 +61,16 @@ class JsonApiDocument {
   bool get isNew => id == null;
 
   String idFor(String relationshipName) {
-    if (relationships.containsKey(relationshipName)) {
-      Map<String, dynamic> data = relationships[relationshipName]['data'];
-      return data['id'];
-    } else
+    if (relationships.containsKey(relationshipName))
+      return relationships[relationshipName]['data']['id'];
+    else
+      return null;
+  }
+
+  String typeFor(String relationshipName) {
+    if (relationships.containsKey(relationshipName))
+      return relationships[relationshipName]['data']['type'];
+    else
       return null;
   }
 
