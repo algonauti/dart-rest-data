@@ -25,7 +25,7 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
 
   bool get isNew => jsonApiDoc.isNew;
 
-  bool get hasErrors => errors.isNotEmpty;
+  bool get hasErrors => errors != null ? errors.isNotEmpty : false;
 
   @override
   String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
