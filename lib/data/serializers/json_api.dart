@@ -103,9 +103,8 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   @override
   Iterator<JsonApiDocument> get iterator => docs.iterator;
 
-  JsonApiManyDocument merge(JsonApiManyDocument other) {
-    docs = docs.followedBy(other);
-    return this;
+  void append(Iterable<JsonApiDocument> moreDocs) {
+    docs = docs.followedBy(moreDocs);
   }
 
   Iterable<String> idsForHasOne(String relationshipName) {
