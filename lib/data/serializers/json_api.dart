@@ -40,9 +40,7 @@ class JsonApiSerializer implements Serializer {
     }
   }
 
-  dynamic parse(String raw) {
-    return json.decode(raw);
-  }
+  dynamic parse(String raw) => json.decode(raw);
 }
 
 class JsonApiDocument {
@@ -60,19 +58,15 @@ class JsonApiDocument {
 
   bool get isNew => id == null;
 
-  String idFor(String relationshipName) {
-    if (relationships.containsKey(relationshipName))
-      return relationships[relationshipName]['data']['id'];
-    else
-      return null;
-  }
+  String idFor(String relationshipName) =>
+      (relationships.containsKey(relationshipName))
+          ? relationships[relationshipName]['data']['id']
+          : null;
 
-  String typeFor(String relationshipName) {
-    if (relationships.containsKey(relationshipName))
-      return relationships[relationshipName]['data']['type'];
-    else
-      return null;
-  }
+  String typeFor(String relationshipName) =>
+      (relationships.containsKey(relationshipName))
+          ? relationships[relationshipName]['data']['type']
+          : null;
 
   Iterable<String> idsFor(String relationshipName) {
     if (relationships.containsKey(relationshipName)) {
@@ -107,20 +101,16 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
     docs = docs.followedBy(moreDocs);
   }
 
-  Iterable<String> idsForHasOne(String relationshipName) {
-    return docs.map((doc) => doc.idFor(relationshipName)).toSet();
-  }
+  Iterable<String> idsForHasOne(String relationshipName) =>
+      docs.map((doc) => doc.idFor(relationshipName)).toSet();
 
-  Iterable<String> idsForHasMany(String relationshipName) {
-    return docs
-        .map((doc) => doc.idsFor(relationshipName))
-        .expand((ids) => ids)
-        .toSet();
-  }
+  Iterable<String> idsForHasMany(String relationshipName) => docs
+      .map((doc) => doc.idsFor(relationshipName))
+      .expand((ids) => ids)
+      .toSet();
 
-  Iterable<JsonApiDocument> includedDocs(String type) {
-    return included.where((record) => record['type'] == type).map((record) =>
-        JsonApiDocument(record['id'], record['type'], record['attributes'],
-            record['relationships']));
-  }
+  Iterable<JsonApiDocument> includedDocs(String type) => included
+      .where((record) => record['type'] == type)
+      .map((record) => JsonApiDocument(record['id'], record['type'],
+          record['attributes'], record['relationships']));
 }
