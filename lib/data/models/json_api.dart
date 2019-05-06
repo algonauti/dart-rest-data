@@ -17,6 +17,8 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
           relationships ?? Map<String, dynamic>(),
         );
 
+  JsonApiModel.init(String type) : this.create(type);
+
   Map<String, dynamic> get attributes => jsonApiDoc.attributes;
   Map<String, dynamic> get relationships => jsonApiDoc.relationships;
   Iterable<dynamic> get included => jsonApiDoc.included;
