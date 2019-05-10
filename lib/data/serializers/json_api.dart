@@ -56,6 +56,15 @@ class JsonApiDocument {
 
   JsonApiDocument.create(this.type, this.attributes, [this.relationships]);
 
+  JsonApiDocument.from(JsonApiDocument other)
+      : this(
+          other.id,
+          other.type,
+          Map<String, dynamic>.from(other.attributes),
+          Map<String, dynamic>.from(other.relationships),
+          List.from(other.included),
+        );
+
   bool get isNew => id == null;
 
   String idFor(String relationshipName) =>
