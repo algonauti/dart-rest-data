@@ -61,8 +61,10 @@ class JsonApiDocument {
           other.id,
           other.type,
           Map<String, dynamic>.from(other.attributes),
-          Map<String, dynamic>.from(other.relationships),
-          List.from(other.included),
+          other.relationships != null
+              ? Map<String, dynamic>.from(other.relationships)
+              : null,
+          other.included != null ? List.from(other.included) : null,
         );
 
   bool get isNew => id == null;
