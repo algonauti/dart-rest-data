@@ -34,6 +34,7 @@ class JsonApiSerializer implements Serializer {
           'attributes': jsonApiDoc.attributes,
           'relationships': jsonApiDoc.relationships
         }
+        //TODO included
       });
     } on CastError {
       throw ArgumentError('document must be a JsonApiDocument');
@@ -129,6 +130,7 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
 _deepCopyRelationships(other) {
   var firstValue;
   if (other is Map) {
+    if (other.isEmpty) return Map<String, dynamic>();
     firstValue = other.values.first;
     if (firstValue is! Map && firstValue is! List)
       return Map<String, dynamic>.from(other);
@@ -139,6 +141,7 @@ _deepCopyRelationships(other) {
       );
   }
   if (other is List) {
+    if (other.isEmpty) return List<Map<String, dynamic>>();
     firstValue = other.first;
     if (firstValue is! Map && firstValue is! List)
       return List<Map<String, dynamic>>.from(other);
