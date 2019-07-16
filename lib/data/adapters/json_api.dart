@@ -123,6 +123,34 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
+  Future<JsonApiDocument> memberPutAction(
+      String endpoint, Object document, String actionPath) async {
+    if (document is! JsonApiDocument) {
+      throw ArgumentError('document must be a JsonApiDocument');
+    }
+    JsonApiDocument jsonApiDoc;
+    try {
+      jsonApiDoc = (document as JsonApiDocument);
+      var response = await httpPut(
+        "$apiPath/$endpoint/${jsonApiDoc.id}/$actionPath",
+        body: serializer.serialize(jsonApiDoc),
+      );
+      String payload = checkAndDecode(response);
+      JsonApiDocument updated = serializer.deserialize(payload);
+      cache(endpoint, updated);
+      return updated;
+    } on UnprocessableException catch (e) {
+      Map parsed = (serializer as JsonApiSerializer).parse(e.responseBody);
+      if (parsed.containsKey('errors')) {
+        jsonApiDoc.errors = parsed['errors'];
+        throw InvalidRecordException();
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
   void cache(String endpoint, Object document) {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
