@@ -16,6 +16,8 @@ abstract class Adapter {
   Future<Iterable<Object>> query(String endpoint, Map<String, String> params);
   Future<Object> save(String endpoint, Object document);
   Future<void> delete(String endpoint, Object document);
+  Future<Object> memberPutAction(
+      String endpoint, Object document, String actionPath);
 
   void cache(String endpoint, Object document);
   void unCache(String endpoint, Object document);

@@ -80,18 +80,20 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future<JsonApiDocument> save(String endpoint, dynamic document) async {
+  Future<JsonApiDocument> save(String endpoint, Object document) async {
     if (document is! JsonApiDocument) {
       throw ArgumentError('document must be a JsonApiDocument');
     }
+    JsonApiDocument jsonApiDoc;
     try {
+      jsonApiDoc = (document as JsonApiDocument);
       var response;
-      if (document.isNew) {
+      if (jsonApiDoc.isNew) {
         response = await httpPost("$apiPath/$endpoint",
-            body: serializer.serialize(document));
+            body: serializer.serialize(jsonApiDoc));
       } else {
-        response = await httpPatch("$apiPath/$endpoint/${document.id}",
-            body: serializer.serialize(document));
+        response = await httpPatch("$apiPath/$endpoint/${jsonApiDoc.id}",
+            body: serializer.serialize(jsonApiDoc));
       }
       String payload = checkAndDecode(response);
       JsonApiDocument saved = serializer.deserialize(payload);
@@ -100,7 +102,7 @@ class JsonApiAdapter extends Adapter with Http {
     } on UnprocessableException catch (e) {
       Map parsed = (serializer as JsonApiSerializer).parse(e.responseBody);
       if (parsed.containsKey('errors')) {
-        document.errors = parsed['errors'];
+        jsonApiDoc.errors = parsed['errors'];
         throw InvalidRecordException();
       } else {
         throw e;
@@ -117,6 +119,34 @@ class JsonApiAdapter extends Adapter with Http {
       checkAndDecode(response);
     } on CastError {
       throw ArgumentError('document must be a JsonApiDocument');
+    }
+  }
+
+  @override
+  Future<JsonApiDocument> memberPutAction(
+      String endpoint, Object document, String actionPath) async {
+    if (document is! JsonApiDocument) {
+      throw ArgumentError('document must be a JsonApiDocument');
+    }
+    JsonApiDocument jsonApiDoc;
+    try {
+      jsonApiDoc = (document as JsonApiDocument);
+      var response = await httpPut(
+        "$apiPath/$endpoint/${jsonApiDoc.id}/$actionPath",
+        body: serializer.serialize(jsonApiDoc),
+      );
+      String payload = checkAndDecode(response);
+      JsonApiDocument updated = serializer.deserialize(payload);
+      cache(endpoint, updated);
+      return updated;
+    } on UnprocessableException catch (e) {
+      Map parsed = (serializer as JsonApiSerializer).parse(e.responseBody);
+      if (parsed.containsKey('errors')) {
+        jsonApiDoc.errors = parsed['errors'];
+        throw InvalidRecordException();
+      } else {
+        throw e;
+      }
     }
   }
 
