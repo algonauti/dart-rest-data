@@ -174,6 +174,14 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
+  void clearCache() {
+    _cache.values.forEach((docCache) {
+      if (docCache is Map) docCache.clear();
+    });
+    _cache.clear();
+  }
+
+  @override
   void cacheMany(String endpoint, Iterable<Object> documents) {
     documents.forEach((document) => cache(endpoint, document));
   }
