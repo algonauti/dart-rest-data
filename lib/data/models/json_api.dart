@@ -69,7 +69,7 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
   }
 
   static DateTime toDateTime(String value) =>
-      (value == null || value.isEmpty) ? null : DateTime.parse(value);
+      (value == null || value.isEmpty) ? null : DateTime.parse(value).toLocal();
 
   static String toUtcIsoString(DateTime value) =>
       value.toUtc().toIso8601String();
