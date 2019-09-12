@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cinderblock/data/exceptions.dart';
 import 'package:http/http.dart' as http;
 
 mixin Http {
@@ -37,7 +38,7 @@ mixin Http {
     else if (code >= 500 && code <= 599)
       throw ServerError(method, url, code, requestBody, responseBody);
     else {
-      throw HttpException(
+      throw HttpStatusException(
         method,
         url,
         statusCode: code,
@@ -93,121 +94,9 @@ mixin Http {
     try {
       return await method();
     } on SocketException {
+      throw NoNetworkError();
+    } on http.ClientException {
       throw NetworkError();
     }
   }
 }
-
-class HttpException implements Exception {
-  String method;
-  String url;
-  String responseBody;
-  String requestBody;
-  int statusCode;
-
-  HttpException(
-    this.method,
-    this.url, {
-    this.statusCode,
-    this.requestBody,
-    this.responseBody,
-  });
-
-  @override
-  String toString() {
-    var msg = "$method $url returned $statusCode";
-    if (responseBody != null) msg += " with body: $responseBody";
-    return msg;
-  }
-}
-
-class BadRequestException extends HttpException {
-  BadRequestException(
-    String method,
-    String url,
-    String requestBody,
-    String responseBody,
-  ) : super(method, url, requestBody: requestBody, responseBody: responseBody);
-
-  @override
-  String toString() =>
-      "Bad request: $method $url\n\n$requestBody\n$responseBody";
-}
-
-class ForbiddenException extends HttpException {
-  ForbiddenException(String method, String url) : super(method, url);
-
-  @override
-  String toString() => "Forbidden request: $method $url";
-}
-
-class UnauthorizedException extends HttpException {
-  UnauthorizedException(String method, String url) : super(method, url);
-
-  @override
-  String toString() => "Unauthorized request: $method $url";
-}
-
-class NotFoundException extends HttpException {
-  NotFoundException(String method, String url) : super(method, url);
-
-  @override
-  String toString() => "Resource not found: $method $url";
-}
-
-class UnprocessableException extends HttpException {
-  UnprocessableException(
-    String method,
-    String url,
-    String requestBody,
-    String responseBody,
-  ) : super(method, url, requestBody: requestBody, responseBody: responseBody);
-
-  @override
-  String toString() =>
-      "Unprocessable request: $method $url\n\n$requestBody\n$responseBody";
-}
-
-class ClientError extends HttpException {
-  ClientError(
-    String method,
-    String url,
-    int statusCode,
-    String requestBody,
-    String responseBody,
-  ) : super(
-          method,
-          url,
-          statusCode: statusCode,
-          requestBody: requestBody,
-          responseBody: responseBody,
-        );
-
-  @override
-  String toString() =>
-      "Client request error: $method $url\n\n$requestBody\n$responseBody";
-}
-
-class ServerError extends HttpException {
-  ServerError(
-    String method,
-    String url,
-    int statusCode,
-    String requestBody,
-    String responseBody,
-  ) : super(
-          method,
-          url,
-          statusCode: statusCode,
-          requestBody: requestBody,
-          responseBody: responseBody,
-        );
-
-  @override
-  String toString() =>
-      "Server processing error: $method $url\n\n$requestBody\n$responseBody";
-}
-
-class NetworkError implements Exception {}
-
-class InvalidDataReceived implements Exception {}
