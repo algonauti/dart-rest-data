@@ -24,6 +24,8 @@ mixin Http {
       return null;
     else if (code == 400)
       throw BadRequestException(method, url, requestBody, responseBody);
+    else if (code == 401)
+      throw UnauthorizedException(method, url);
     else if (code == 403)
       throw ForbiddenException(method, url);
     else if (code == 404)
@@ -137,6 +139,13 @@ class ForbiddenException extends HttpException {
 
   @override
   String toString() => "Forbidden request: $method $url";
+}
+
+class UnauthorizedException extends HttpException {
+  UnauthorizedException(String method, String url) : super(method, url);
+
+  @override
+  String toString() => "Unauthorized request: $method $url";
 }
 
 class NotFoundException extends HttpException {
