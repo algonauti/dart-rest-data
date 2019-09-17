@@ -39,6 +39,12 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
 
   bool get hasErrors => errors != null ? errors.isNotEmpty : false;
 
+  clearErrors(String attributeName) =>
+      jsonApiDoc.errors = errors.where((error) =>
+          error['source']['pointer'] != "/data/attributes/$attributeName");
+
+  clearAllErrors() => jsonApiDoc.errors = null;
+
   @override
   String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
 
