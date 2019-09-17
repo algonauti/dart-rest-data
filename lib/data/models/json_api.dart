@@ -28,6 +28,7 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
   Map<String, dynamic> get relationships => jsonApiDoc.relationships;
   Iterable<dynamic> get included => jsonApiDoc.included;
   Iterable<dynamic> get errors => jsonApiDoc.errors;
+  set errors(Iterable<dynamic> value) => jsonApiDoc.errors = value;
 
   @override
   String get id => jsonApiDoc.id;
@@ -38,12 +39,6 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
   bool get isNew => jsonApiDoc.isNew;
 
   bool get hasErrors => errors != null ? errors.isNotEmpty : false;
-
-  clearErrors(String attributeName) =>
-      jsonApiDoc.errors = errors.where((error) =>
-          error['source']['pointer'] != "/data/attributes/$attributeName");
-
-  clearAllErrors() => jsonApiDoc.errors = null;
 
   @override
   String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
@@ -58,14 +53,32 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
   Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) =>
       jsonApiDoc.includedDocs(type, ids);
 
-  Iterable<String> errorsFor(String attributeName) {
-    return hasErrors
-        ? errors
-            .where((error) =>
-                error['source']['pointer'] == "/data/attributes/$attributeName")
-            .map((error) => error['detail'])
-        : null;
+  bool attributeHasErrors(String attributeName) => hasErrors
+      ? errors.any((error) =>
+          _isAttributeError(error, attributeName) && _hasErrorDetail(error))
+      : false;
+
+  Iterable<String> errorsFor(String attributeName) => errors
+      .where((error) => _isAttributeError(error, attributeName))
+      .map((error) => error['detail']);
+
+  void clearErrorsFor(String attributeName) {
+    errors = errors
+        .where((error) => !_isAttributeError(error, attributeName))
+        .toList();
   }
+
+  void clearErrors() {
+    jsonApiDoc.errors = null;
+  }
+
+  bool _isAttributeError(Map<String, dynamic> error, String attributeName) =>
+      error['source']['pointer'] == "/data/attributes/$attributeName";
+
+  bool _hasErrorDetail(Map<String, dynamic> error) =>
+      error['detail'] != null &&
+      error['detail'] is String &&
+      (error['detail'] as String).isNotEmpty;
 
   void setHasOne(String relationshipName, JsonApiModel model) {
     if (relationships.containsKey(relationshipName)) {
