@@ -53,10 +53,12 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
       jsonApiDoc.includedDocs(type, ids);
 
   Iterable<String> errorsFor(String attributeName) {
-    return errors
-        .where((error) =>
-            error['source']['pointer'] == "/data/attributes/$attributeName")
-        .map((error) => error['detail']);
+    return hasErrors
+        ? errors
+            .where((error) =>
+                error['source']['pointer'] == "/data/attributes/$attributeName")
+            .map((error) => error['detail'])
+        : null;
   }
 
   void setHasOne(String relationshipName, JsonApiModel model) {
