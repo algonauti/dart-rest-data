@@ -20,11 +20,8 @@ class HttpStatusException implements Exception {
   });
 
   @override
-  String toString() {
-    var msg = "$method $url returned $statusCode";
-    if (responseBody != null) msg += " with body: $responseBody";
-    return msg;
-  }
+  String toString() =>
+      "HTTP error: $method $url\n\n$requestBody\n$responseBody";
 }
 
 class BadRequestException extends HttpStatusException {
