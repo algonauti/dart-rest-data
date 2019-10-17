@@ -121,12 +121,15 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
     docs = docs.followedBy(moreDocs);
   }
 
-  Iterable<String> idsForHasOne(String relationshipName) =>
-      docs.map((doc) => doc.idFor(relationshipName)).toSet();
+  Iterable<String> idsForHasOne(String relationshipName) => docs
+      .map((doc) => doc.idFor(relationshipName))
+      .where((id) => id != null)
+      .toSet();
 
   Iterable<String> idsForHasMany(String relationshipName) => docs
       .map((doc) => doc.idsFor(relationshipName))
       .expand((ids) => ids)
+      .where((id) => id != null)
       .toSet();
 
   Iterable<JsonApiDocument> includedDocs(String type) => included
