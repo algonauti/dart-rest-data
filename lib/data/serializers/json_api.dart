@@ -77,23 +77,24 @@ class JsonApiDocument {
 
   bool get isNew => id == null;
 
+  Map<String, dynamic> dataForHasOne(String relationshipName) =>
+      relationships.containsKey(relationshipName)
+          ? (relationships[relationshipName]['data'] ?? Map<String, dynamic>())
+          : Map<String, dynamic>();
+
   String idFor(String relationshipName) =>
-      (relationships.containsKey(relationshipName))
-          ? relationships[relationshipName]['data']['id']
-          : null;
+      dataForHasOne(relationshipName)['id'];
 
   String typeFor(String relationshipName) =>
-      (relationships.containsKey(relationshipName))
-          ? relationships[relationshipName]['data']['type']
-          : null;
+      dataForHasOne(relationshipName)['type'];
 
-  Iterable<String> idsFor(String relationshipName) {
-    if (relationships.containsKey(relationshipName)) {
-      Iterable<dynamic> data = relationships[relationshipName]['data'];
-      return data.map((record) => record['id']);
-    } else
-      return List<String>();
-  }
+  Iterable<dynamic> dataForHasMany(String relationshipName) =>
+      relationships[relationshipName]['data'] ?? List();
+
+  Iterable<String> idsFor(String relationshipName) =>
+      relationships.containsKey(relationshipName)
+          ? dataForHasMany(relationshipName).map((record) => record['id'])
+          : List<String>();
 
   Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) {
     ids ??= idsFor(type);
