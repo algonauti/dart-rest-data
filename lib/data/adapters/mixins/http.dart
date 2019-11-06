@@ -97,6 +97,8 @@ mixin Http {
       throw NoNetworkError();
     } on http.ClientException {
       throw NetworkError();
+    } on TlsException {
+      throw NetworkError();
     }
   }
 }
