@@ -200,6 +200,7 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   JsonApiManyDocument peekAll(String endpoint) {
     Map<String, JsonApiDocument> docCache = _cache[endpoint];
-    return docCache != null ? JsonApiManyDocument(docCache.values) : null;
+    return JsonApiManyDocument(
+        docCache != null ? docCache.values : List<JsonApiDocument>());
   }
 }
