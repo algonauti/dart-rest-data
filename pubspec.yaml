@@ -1,0 +1,15 @@
+name: rest_data
+description: Easily handle REST API data
+version: 0.0.1
+author: Algonauti
+homepage: http://www.algonauti.com
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  equatable: ^0.2.5
+  http: ^0.12.0+2
+
+dev_dependencies:
+  test: ^1.9.3

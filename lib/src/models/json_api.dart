@@ -1,6 +1,7 @@
-import 'package:cinderblock/data/interfaces.dart';
-import 'package:cinderblock/data/serializers/json_api.dart';
 import 'package:equatable/equatable.dart';
+
+import '../interfaces.dart';
+import '../serializers/json_api.dart';
 
 class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
   JsonApiDocument jsonApiDoc;

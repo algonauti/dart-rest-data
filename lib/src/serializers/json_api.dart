@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:cinderblock/data/exceptions.dart';
-import 'package:cinderblock/data/interfaces.dart';
+import '../exceptions.dart';
+import '../interfaces.dart';
 
 class JsonApiSerializer implements Serializer {
   @override

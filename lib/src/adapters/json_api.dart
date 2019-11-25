@@ -1,7 +1,7 @@
-import 'package:cinderblock/data/adapters/mixins/http.dart';
-import 'package:cinderblock/data/exceptions.dart';
-import 'package:cinderblock/data/interfaces.dart';
-import 'package:cinderblock/data/serializers/json_api.dart';
+import './mixins/http.dart';
+import '../exceptions.dart';
+import '../interfaces.dart';
+import '../serializers/json_api.dart';
 
 class JsonApiAdapter extends Adapter with Http {
   String apiPath;

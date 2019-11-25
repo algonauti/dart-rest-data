@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cinderblock/data/exceptions.dart';
 import 'package:http/http.dart' as http;
+
+import '../../exceptions.dart';
 
 mixin Http {
   String hostname;
