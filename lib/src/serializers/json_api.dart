@@ -143,21 +143,23 @@ _deepCopyRelationships(other) {
   if (other is Map) {
     if (other.isEmpty) return Map<String, dynamic>();
     firstValue = other.values.first;
-    if (firstValue is! Map && firstValue is! List)
+    if (firstValue is! Map && firstValue is! List) {
       return Map<String, dynamic>.from(other);
-    else
+    } else {
       return Map<String, dynamic>.fromIterables(
         other.keys,
         other.values.map((val) => _deepCopyRelationships(val)),
       );
+    }
   }
   if (other is List) {
     if (other.isEmpty) return List<Map<String, dynamic>>();
     firstValue = other.first;
-    if (firstValue is! Map && firstValue is! List)
+    if (firstValue is! Map && firstValue is! List) {
       return List<Map<String, dynamic>>.from(other);
-    else
+    } else {
       return List<Map<String, dynamic>>.from(
           other.map((val) => _deepCopyRelationships(val)));
+    }
   }
 }

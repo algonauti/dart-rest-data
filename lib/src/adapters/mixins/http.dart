@@ -22,23 +22,23 @@ mixin Http {
       } on FormatException {
         throw InvalidDataReceived();
       }
-    } else if (code == 204)
+    } else if (code == 204) {
       return null;
-    else if (code == 400)
+    } else if (code == 400) {
       throw BadRequestException(method, url, requestBody, responseBody);
-    else if (code == 401)
+    } else if (code == 401) {
       throw UnauthorizedException(method, url);
-    else if (code == 403)
+    } else if (code == 403) {
       throw ForbiddenException(method, url);
-    else if (code == 404)
+    } else if (code == 404) {
       throw NotFoundException(method, url);
-    else if (code == 422)
+    } else if (code == 422) {
       throw UnprocessableException(method, url, requestBody, responseBody);
-    else if (code > 400 && code < 500)
+    } else if (code > 400 && code < 500) {
       throw ClientError(method, url, code, requestBody, responseBody);
-    else if (code >= 500 && code <= 599)
+    } else if (code >= 500 && code <= 599) {
       throw ServerError(method, url, code, requestBody, responseBody);
-    else {
+    } else {
       throw HttpStatusException(
         method,
         url,

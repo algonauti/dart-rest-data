@@ -84,10 +84,11 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
   void setHasOne(String relationshipName, JsonApiModel model) {
     if (relationships.containsKey(relationshipName)) {
       relationships[relationshipName]['data']['id'] = model.id;
-    } else
+    } else {
       relationships[relationshipName] = {
         'data': {'id': model.id, 'type': model.type}
       };
+    }
   }
 
   static DateTime toDateTime(String value) =>

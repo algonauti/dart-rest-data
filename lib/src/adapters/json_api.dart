@@ -18,10 +18,11 @@ class JsonApiAdapter extends Adapter with Http {
       {bool forceReload = false}) async {
     if (forceReload == true) return _fetchAndCache(endpoint, id);
     JsonApiDocument cached = peek(endpoint, id);
-    if (cached != null)
+    if (cached != null) {
       return cached;
-    else
+    } else {
       return _fetchAndCache(endpoint, id);
+    }
   }
 
   Future<JsonApiDocument> _fetchAndCache(String endpoint, String id) async {
@@ -49,8 +50,9 @@ class JsonApiAdapter extends Adapter with Http {
           await query(endpoint, _idsParam(loadableIds));
       if (cachedDocs.isNotEmpty) loaded.append(cachedDocs);
       return loaded;
-    } else
+    } else {
       return cached;
+    }
   }
 
   Map<String, String> _idsParam(Iterable<String> ids) {
