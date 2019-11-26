@@ -1,5 +1,5 @@
 name: rest_data
-description: Easily handle REST API data
+description: Easily interact with REST APIs without dealing with HTTP and JSON
 version: 0.1.0
 author: Algonauti <info@algonauti.com>
 homepage: https://www.algonauti.com
