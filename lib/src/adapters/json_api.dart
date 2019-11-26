@@ -107,7 +107,7 @@ class JsonApiAdapter extends Adapter with Http {
         jsonApiDoc.errors = parsed['errors'];
         throw InvalidRecordException();
       } else {
-        throw e;
+        rethrow;
       }
     }
   }
@@ -147,7 +147,7 @@ class JsonApiAdapter extends Adapter with Http {
         jsonApiDoc.errors = parsed['errors'];
         throw InvalidRecordException();
       } else {
-        throw e;
+        rethrow;
       }
     }
   }
