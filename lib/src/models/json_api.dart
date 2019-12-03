@@ -96,6 +96,9 @@ class JsonApiModel with EquatableMixin implements Model {
 
   static String toUtcIsoString(DateTime value) =>
       value.toUtc().toIso8601String();
+
+  @override
+  List<Object> get props => [id, type, errors];
 }
 
 abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
