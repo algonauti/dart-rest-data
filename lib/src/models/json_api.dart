@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../interfaces.dart';
 import '../serializers/json_api.dart';
 
-class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
+class JsonApiModel with EquatableMixin implements Model {
   JsonApiDocument jsonApiDoc;
 
   JsonApiModel(this.jsonApiDoc);
