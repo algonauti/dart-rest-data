@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../interfaces.dart';
 import '../serializers/json_api.dart';
 
-class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
+class JsonApiModel with EquatableMixin implements Model {
   JsonApiDocument jsonApiDoc;
 
   JsonApiModel(this.jsonApiDoc);
@@ -96,6 +96,9 @@ class JsonApiModel with EquatableMixinBase, EquatableMixin implements Model {
 
   static String toUtcIsoString(DateTime value) =>
       value.toUtc().toIso8601String();
+
+  @override
+  List<Object> get props => [id, type, errors];
 }
 
 abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
