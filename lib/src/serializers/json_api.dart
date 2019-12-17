@@ -112,6 +112,7 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
 
   JsonApiManyDocument(this.docs, [this.included, this.meta]) {
     meta ??= Map<String, dynamic>();
+    included ??= List();
   }
 
   @override
