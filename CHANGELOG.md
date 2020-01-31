@@ -1,3 +1,8 @@
+## [0.2.1] - January 31st, 2020
+
+* Fixed bug with `JSON:API` included docs
+* Upgraded dependencies
+
 ## [0.2.0] - December 3rd, 2019
 
 * Upgraded `equatable` to `1.0.1`
