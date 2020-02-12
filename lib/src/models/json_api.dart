@@ -29,7 +29,6 @@ class JsonApiModel with EquatableMixin implements Model {
   Map<String, dynamic> get relationships => jsonApiDoc.relationships;
   Iterable<dynamic> get included => jsonApiDoc.included;
   Iterable<dynamic> get errors => jsonApiDoc.errors;
-  set errors(Iterable<dynamic> value) => jsonApiDoc.errors = value;
 
   @override
   String get id => jsonApiDoc.id;
@@ -39,7 +38,7 @@ class JsonApiModel with EquatableMixin implements Model {
 
   bool get isNew => jsonApiDoc.isNew;
 
-  bool get hasErrors => errors != null ? errors.isNotEmpty : false;
+  bool get hasErrors => jsonApiDoc.hasErrors;
 
   @override
   String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
@@ -54,32 +53,19 @@ class JsonApiModel with EquatableMixin implements Model {
   Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) =>
       jsonApiDoc.includedDocs(type, ids);
 
-  bool attributeHasErrors(String attributeName) => hasErrors
-      ? errors.any((error) =>
-          _isAttributeError(error, attributeName) && _hasErrorDetail(error))
-      : false;
+  bool attributeHasErrors(String attributeName) =>
+      jsonApiDoc.attributeHasErrors(attributeName);
 
-  Iterable<String> errorsFor(String attributeName) => errors
-      .where((error) => _isAttributeError(error, attributeName))
-      .map((error) => error['detail']);
+  Iterable<String> errorsFor(String attributeName) =>
+      jsonApiDoc.errorsFor(attributeName);
 
   void clearErrorsFor(String attributeName) {
-    errors = errors
-        .where((error) => !_isAttributeError(error, attributeName))
-        .toList();
+    jsonApiDoc.clearErrorsFor(attributeName);
   }
 
   void clearErrors() {
-    jsonApiDoc.errors = null;
+    jsonApiDoc.clearErrors();
   }
-
-  bool _isAttributeError(Map<String, dynamic> error, String attributeName) =>
-      error['source']['pointer'] == "/data/attributes/$attributeName";
-
-  bool _hasErrorDetail(Map<String, dynamic> error) =>
-      error['detail'] != null &&
-      error['detail'] is String &&
-      (error['detail'] as String).isNotEmpty;
 
   void setHasOne(String relationshipName, JsonApiModel model) {
     jsonApiDoc.setHasOne(relationshipName, model.id, model.type);
