@@ -96,6 +96,16 @@ class JsonApiDocument {
           ? dataForHasMany(relationshipName).map((record) => record['id'])
           : List<String>();
 
+  void setHasOne(String relationshipName, String modelId, String modelType) {
+    if (relationships.containsKey(relationshipName)) {
+      relationships[relationshipName]['data']['id'] = modelId;
+    } else {
+      relationships[relationshipName] = {
+        'data': {'id': modelId, 'type': modelType}
+      };
+    }
+  }
+
   Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) {
     ids ??= idsFor(type);
     return (included ?? List())
