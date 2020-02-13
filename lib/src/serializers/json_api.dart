@@ -57,7 +57,7 @@ class JsonApiDocument {
   Map<String, dynamic> attributes;
   Map<String, dynamic> relationships;
   Iterable<dynamic> included;
-  Iterable<dynamic> errors;
+  List<Map<String, dynamic>> errors;
 
   JsonApiDocument(this.id, this.type, this.attributes, this.relationships,
       [this.included]);
