@@ -57,7 +57,7 @@ class JsonApiDocument {
   Map<String, dynamic> attributes;
   Map<String, dynamic> relationships;
   Iterable<dynamic> included;
-  Iterable<dynamic> errors;
+  List<Map<String, dynamic>> errors;
 
   JsonApiDocument(this.id, this.type, this.attributes, this.relationships,
       [this.included]);
@@ -76,6 +76,8 @@ class JsonApiDocument {
         );
 
   bool get isNew => id == null;
+
+  bool get hasErrors => errors != null ? errors.isNotEmpty : false;
 
   Map<String, dynamic> dataForHasOne(String relationshipName) =>
       relationships.containsKey(relationshipName)
@@ -96,6 +98,16 @@ class JsonApiDocument {
           ? dataForHasMany(relationshipName).map((record) => record['id'])
           : List<String>();
 
+  void setHasOne(String relationshipName, String modelId, String modelType) {
+    if (relationships.containsKey(relationshipName)) {
+      relationships[relationshipName]['data']['id'] = modelId;
+    } else {
+      relationships[relationshipName] = {
+        'data': {'id': modelId, 'type': modelType}
+      };
+    }
+  }
+
   Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) {
     ids ??= idsFor(type);
     return (included ?? List())
@@ -103,6 +115,41 @@ class JsonApiDocument {
         .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
             record['type'], record['attributes'], record['relationships']));
   }
+
+  bool attributeHasErrors(String attributeName) => hasErrors
+      ? errors.any((error) =>
+          _isAttributeError(error, attributeName) && _hasErrorDetail(error))
+      : false;
+
+  Iterable<String> errorsFor(String attributeName) => errors
+      .where((error) => _isAttributeError(error, attributeName))
+      .map((error) => error['detail']);
+
+  void clearErrorsFor(String attributeName) {
+    errors = errors
+        .where((error) => !_isAttributeError(error, attributeName))
+        .toList();
+  }
+
+  void clearErrors() {
+    errors = null;
+  }
+
+  void addErrorFor(String attributeName, String errorMessage) {
+    errors ??= List<Map<String, dynamic>>();
+    errors.add({
+      'source': {'pointer': "/data/attributes/$attributeName"},
+      'detail': errorMessage,
+    });
+  }
+
+  bool _isAttributeError(Map<String, dynamic> error, String attributeName) =>
+      error['source']['pointer'] == "/data/attributes/$attributeName";
+
+  bool _hasErrorDetail(Map<String, dynamic> error) =>
+      error['detail'] != null &&
+      error['detail'] is String &&
+      (error['detail'] as String).isNotEmpty;
 }
 
 class JsonApiManyDocument extends Iterable<JsonApiDocument> {
