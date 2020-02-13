@@ -67,6 +67,10 @@ class JsonApiModel with EquatableMixin implements Model {
     jsonApiDoc.clearErrors();
   }
 
+  void addErrorFor(String attributeName, String errorMessage) {
+    jsonApiDoc.addErrorFor(attributeName, errorMessage);
+  }
+
   void setHasOne(String relationshipName, JsonApiModel model) {
     jsonApiDoc.setHasOne(relationshipName, model.id, model.type);
   }

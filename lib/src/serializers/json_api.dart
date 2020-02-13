@@ -136,7 +136,11 @@ class JsonApiDocument {
   }
 
   void addErrorFor(String attributeName, String errorMessage) {
-    // TODO
+    errors ??= List<Map<String, dynamic>>();
+    errors.add({
+      'source': {'pointer': "/data/attributes/$attributeName"},
+      'detail': errorMessage,
+    });
   }
 
   bool _isAttributeError(Map<String, dynamic> error, String attributeName) =>
