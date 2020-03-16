@@ -75,6 +75,32 @@ class JsonApiDocument {
           other.included != null ? List.from(other.included) : null,
         );
 
+  static _deepCopyRelationships(other) {
+    var firstValue;
+    if (other is Map) {
+      if (other.isEmpty) return Map<String, dynamic>();
+      firstValue = other.values.first;
+      if (firstValue is! Map && firstValue is! List) {
+        return Map<String, dynamic>.from(other);
+      } else {
+        return Map<String, dynamic>.fromIterables(
+          other.keys,
+          other.values.map((val) => _deepCopyRelationships(val)),
+        );
+      }
+    }
+    if (other is List) {
+      if (other.isEmpty) return List<Map<String, dynamic>>();
+      firstValue = other.first;
+      if (firstValue is! Map && firstValue is! List) {
+        return List<Map<String, dynamic>>.from(other);
+      } else {
+        return List<Map<String, dynamic>>.from(
+            other.map((val) => _deepCopyRelationships(val)));
+      }
+    }
+  }
+
   bool get isNew => id == null;
 
   bool get hasErrors => errors != null ? errors.isNotEmpty : false;
@@ -184,30 +210,4 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
       .where((record) => record['type'] == type)
       .map((record) => JsonApiDocument(record['id'], record['type'],
           record['attributes'], record['relationships']));
-}
-
-_deepCopyRelationships(other) {
-  var firstValue;
-  if (other is Map) {
-    if (other.isEmpty) return Map<String, dynamic>();
-    firstValue = other.values.first;
-    if (firstValue is! Map && firstValue is! List) {
-      return Map<String, dynamic>.from(other);
-    } else {
-      return Map<String, dynamic>.fromIterables(
-        other.keys,
-        other.values.map((val) => _deepCopyRelationships(val)),
-      );
-    }
-  }
-  if (other is List) {
-    if (other.isEmpty) return List<Map<String, dynamic>>();
-    firstValue = other.first;
-    if (firstValue is! Map && firstValue is! List) {
-      return List<Map<String, dynamic>>.from(other);
-    } else {
-      return List<Map<String, dynamic>>.from(
-          other.map((val) => _deepCopyRelationships(val)));
-    }
-  }
 }
