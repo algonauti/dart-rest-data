@@ -101,6 +101,8 @@ class JsonApiDocument {
     }
   }
 
+  String get endpoint => type.replaceAll(RegExp('_'), '-');
+
   bool get isNew => id == null;
 
   bool get hasErrors => errors != null ? errors.isNotEmpty : false;
