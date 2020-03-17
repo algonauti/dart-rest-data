@@ -117,11 +117,18 @@ class JsonApiAdapter extends Adapter with Http {
     try {
       unCache(endpoint, document);
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
-      final response = await httpDelete("$apiPath/$endpoint/${jsonApiDoc.id}");
-      checkAndDecode(response);
+      await performDelete(endpoint, jsonApiDoc);
     } on CastError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
+  }
+
+  Future<void> performDelete(
+    String endpoint,
+    JsonApiDocument jsonApiDoc,
+  ) async {
+    final response = await httpDelete("$apiPath/$endpoint/${jsonApiDoc.id}");
+    checkAndDecode(response);
   }
 
   @override
