@@ -25,6 +25,7 @@ class JsonApiModel with EquatableMixin implements Model {
 
   JsonApiModel.shallowCopy(JsonApiModel other) : this(other.jsonApiDoc);
 
+  String get endpoint => jsonApiDoc.endpoint;
   Map<String, dynamic> get attributes => jsonApiDoc.attributes;
   Map<String, dynamic> get relationships => jsonApiDoc.relationships;
   Iterable<dynamic> get included => jsonApiDoc.included;
@@ -94,6 +95,7 @@ abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
   @override
   Iterator<T> get iterator => models.iterator;
 
+  bool get hasMeta => manyDoc.meta.isNotEmpty;
   int get currentPage => manyDoc.meta['current_page'];
   int get pageSize => manyDoc.meta['page_size'];
   int get totalPages => manyDoc.meta['total_pages'];

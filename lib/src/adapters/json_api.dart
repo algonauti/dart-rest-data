@@ -7,7 +7,7 @@ class JsonApiAdapter extends Adapter with Http {
   String apiPath;
   Map<String, Map<String, JsonApiDocument>> _cache;
 
-  JsonApiAdapter(hostname, this.apiPath) : super(JsonApiSerializer()) {
+  JsonApiAdapter(String hostname, this.apiPath) : super(JsonApiSerializer()) {
     this.hostname = hostname;
     _cache = Map<String, Map<String, JsonApiDocument>>();
     addHeader('Content-Type', 'application/json; charset=utf-8');
@@ -16,22 +16,22 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   Future<JsonApiDocument> find(String endpoint, String id,
       {bool forceReload = false}) async {
-    if (forceReload == true) return _fetchAndCache(endpoint, id);
+    if (forceReload == true) return fetchAndCache(endpoint, id);
     JsonApiDocument cached = peek(endpoint, id);
     if (cached != null) {
       return cached;
     } else {
-      return _fetchAndCache(endpoint, id);
+      return fetchAndCache(endpoint, id);
     }
   }
 
-  Future<JsonApiDocument> _fetchAndCache(String endpoint, String id) async {
-    JsonApiDocument fetched = await _fetch(endpoint, id);
+  Future<JsonApiDocument> fetchAndCache(String endpoint, String id) async {
+    JsonApiDocument fetched = await fetch(endpoint, id);
     cache(endpoint, fetched);
     return fetched;
   }
 
-  Future<JsonApiDocument> _fetch(String endpoint, String id) async {
+  Future<JsonApiDocument> fetch(String endpoint, String id) async {
     final response = await httpGet("$apiPath/$endpoint/$id");
     String payload = checkAndDecode(response);
     return serializer.deserialize(payload);
@@ -117,11 +117,18 @@ class JsonApiAdapter extends Adapter with Http {
     try {
       unCache(endpoint, document);
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
-      final response = await httpDelete("$apiPath/$endpoint/${jsonApiDoc.id}");
-      checkAndDecode(response);
+      await performDelete(endpoint, jsonApiDoc);
     } on CastError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
+  }
+
+  Future<void> performDelete(
+    String endpoint,
+    JsonApiDocument jsonApiDoc,
+  ) async {
+    final response = await httpDelete("$apiPath/$endpoint/${jsonApiDoc.id}");
+    checkAndDecode(response);
   }
 
   @override
