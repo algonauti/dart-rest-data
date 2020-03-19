@@ -29,18 +29,21 @@ class JsonApiSerializer implements Serializer {
   }
 
   @override
-  String serialize(Object document) {
+  String serialize(Object document, {bool withIncluded = false}) {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
-      return json.encode({
+      Map<String, dynamic> jsonMap = {
         'data': {
           'id': jsonApiDoc.id,
           'type': jsonApiDoc.type,
           'attributes': jsonApiDoc.attributes,
-          'relationships': jsonApiDoc.relationships
-        }
-        //TODO included
-      });
+          'relationships': jsonApiDoc.relationships,
+        },
+      };
+      if (withIncluded) {
+        jsonMap['included'] = jsonApiDoc.included;
+      }
+      return json.encode(jsonMap);
     } on CastError {
       throw ArgumentError('document must be a JsonApiDocument');
     } on JsonUnsupportedObjectError {
