@@ -1,3 +1,12 @@
+## [0.3.0] - March 19th, 2020
+
+* Added library name
+* Upgraded dependencies
+* Improved extensibility of `JsonApiAdapter`
+* Let `JsonApiSerializer` optionally serialize included records
+* Added `endpoint` computed property and `addErrorFor()` to `JsonApiModel`
+* Added `hasMeta` computed property to `JsonApiManyModel`
+
 ## [0.2.1] - January 31st, 2020
 
 * Fixed bug with `JSON:API` included docs
