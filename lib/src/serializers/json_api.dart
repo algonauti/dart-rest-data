@@ -183,6 +183,8 @@ class JsonApiDocument {
       (error['detail'] as String).isNotEmpty;
 }
 
+typedef FilterFunction = bool Function(JsonApiDocument);
+
 class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   Iterable<JsonApiDocument> docs;
   Iterable<dynamic> included;
@@ -198,6 +200,10 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
 
   void append(Iterable<JsonApiDocument> moreDocs) {
     docs = docs.followedBy(moreDocs);
+  }
+
+  void filter(FilterFunction filterFn) {
+    docs = docs.where(filterFn);
   }
 
   Iterable<String> idsForHasOne(String relationshipName) => docs
