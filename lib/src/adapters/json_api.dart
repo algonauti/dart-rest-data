@@ -175,8 +175,9 @@ class JsonApiAdapter extends Adapter with Http {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
       Map<String, JsonApiDocument> docCache = _cache[endpoint];
-      if (docCache != null && docCache.containsKey(jsonApiDoc.id))
+      if (docCache != null && docCache.containsKey(jsonApiDoc.id)) {
         docCache.remove(jsonApiDoc.id);
+      }
     } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
