@@ -118,7 +118,7 @@ class JsonApiAdapter extends Adapter with Http {
       unCache(endpoint, document);
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
       await performDelete(endpoint, jsonApiDoc);
-    } on CastError {
+    } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
   }
@@ -165,7 +165,7 @@ class JsonApiAdapter extends Adapter with Http {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
       _cache[endpoint] ??= Map<String, JsonApiDocument>();
       _cache[endpoint][jsonApiDoc.id] = jsonApiDoc;
-    } on CastError {
+    } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
   }
@@ -175,9 +175,10 @@ class JsonApiAdapter extends Adapter with Http {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
       Map<String, JsonApiDocument> docCache = _cache[endpoint];
-      if (docCache != null && docCache.containsKey(jsonApiDoc.id))
+      if (docCache != null && docCache.containsKey(jsonApiDoc.id)) {
         docCache.remove(jsonApiDoc.id);
-    } on CastError {
+      }
+    } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
   }

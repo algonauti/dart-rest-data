@@ -44,7 +44,7 @@ class JsonApiSerializer implements Serializer {
         jsonMap['included'] = jsonApiDoc.included;
       }
       return json.encode(jsonMap);
-    } on CastError {
+    } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
     } on JsonUnsupportedObjectError {
       throw SerializationException();
