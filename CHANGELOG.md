@@ -1,3 +1,8 @@
+## [0.3.1] - June 29th, 2020
+
+* Upgraded dependencies
+* Fixed Dart deprecation
+
 ## [0.3.0] - March 19th, 2020
 
 * Added library name
