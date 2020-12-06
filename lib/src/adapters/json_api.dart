@@ -16,7 +16,9 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   Future<JsonApiDocument> find(String endpoint, String id,
       {bool forceReload = false}) async {
-    if (forceReload == true) return fetchAndCache(endpoint, id);
+    if (forceReload == true) {
+      return fetchAndCache(endpoint, id);
+    }
     JsonApiDocument cached = peek(endpoint, id);
     if (cached != null) {
       return cached;
@@ -40,7 +42,12 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   Future<JsonApiManyDocument> findMany(String endpoint, Iterable<String> ids,
       {bool forceReload = false}) async {
-    if (forceReload == true) return await query(endpoint, _idsParam(ids));
+    if (ids.isEmpty) {
+      return Future.value(JsonApiManyDocument(List<JsonApiDocument>()));
+    }
+    if (forceReload == true) {
+      return await query(endpoint, _idsParam(ids));
+    }
     JsonApiManyDocument cached = peekMany(endpoint, ids);
     if (cached.length != ids.length) {
       List<JsonApiDocument> cachedDocs = cached.toList();
@@ -186,7 +193,9 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   void clearCache() {
     _cache.values.forEach((docCache) {
-      if (docCache is Map) docCache.clear();
+      if (docCache is Map) {
+        docCache.clear();
+      }
     });
     _cache.clear();
   }
