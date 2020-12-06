@@ -40,7 +40,12 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   Future<JsonApiManyDocument> findMany(String endpoint, Iterable<String> ids,
       {bool forceReload = false}) async {
-    if (forceReload == true) return await query(endpoint, _idsParam(ids));
+    if (ids.isEmpty) {
+      return Future.value(JsonApiManyDocument(List<JsonApiDocument>()));
+    }
+    if (forceReload == true) {
+      return await query(endpoint, _idsParam(ids));
+    }
     JsonApiManyDocument cached = peekMany(endpoint, ids);
     if (cached.length != ids.length) {
       List<JsonApiDocument> cachedDocs = cached.toList();
