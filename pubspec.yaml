@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   equatable: ^1.2.0
-  http: ^0.12.1
+  http: ^0.12.2
 
 dev_dependencies:
   test: ^1.15.1
