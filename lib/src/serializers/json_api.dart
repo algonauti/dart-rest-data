@@ -81,7 +81,9 @@ class JsonApiDocument {
   static _deepCopyRelationships(other) {
     var firstValue;
     if (other is Map) {
-      if (other.isEmpty) return Map<String, dynamic>();
+      if (other.isEmpty) {
+        return Map<String, dynamic>();
+      }
       firstValue = other.values.first;
       if (firstValue is! Map && firstValue is! List) {
         return Map<String, dynamic>.from(other);
@@ -93,7 +95,9 @@ class JsonApiDocument {
       }
     }
     if (other is List) {
-      if (other.isEmpty) return List<Map<String, dynamic>>();
+      if (other.isEmpty) {
+        return List<Map<String, dynamic>>();
+      }
       firstValue = other.first;
       if (firstValue is! Map && firstValue is! List) {
         return List<Map<String, dynamic>>.from(other);
