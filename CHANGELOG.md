@@ -1,3 +1,8 @@
+## [0.3.2] - December 6th, 2020
+
+* Upgraded dependencies
+* Fixed bug with `findMany()` method in `JsonApiAdapter` 
+
 ## [0.3.1] - June 29th, 2020
 
 * Upgraded dependencies
