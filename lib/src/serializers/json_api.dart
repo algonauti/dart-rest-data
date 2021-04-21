@@ -134,12 +134,15 @@ class JsonApiDocument {
           : List<String>();
 
   void setHasOne(String relationshipName, String modelId, String modelType) {
+    Map<String, dynamic> relationshipMap = {'id': modelId, 'type': modelType};
     if (relationships.containsKey(relationshipName)) {
-      relationships[relationshipName]['data']['id'] = modelId;
+      if (relationships[relationshipName]['data'] == null) {
+        relationships[relationshipName]['data'] = relationshipMap;
+      } else {
+        relationships[relationshipName]['data']['id'] = modelId;
+      }
     } else {
-      relationships[relationshipName] = {
-        'data': {'id': modelId, 'type': modelType}
-      };
+      relationships[relationshipName] = {'data': relationshipMap};
     }
   }
 
