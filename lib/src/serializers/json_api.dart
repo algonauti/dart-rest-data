@@ -96,7 +96,7 @@ class JsonApiDocument {
     }
     if (other is List) {
       if (other.isEmpty) {
-        return List<Map<String, dynamic>>();
+        return <Map<String, dynamic>>[];
       }
       firstValue = other.first;
       if (firstValue is! Map && firstValue is! List) {
@@ -126,26 +126,29 @@ class JsonApiDocument {
       dataForHasOne(relationshipName)['type'];
 
   Iterable<dynamic> dataForHasMany(String relationshipName) =>
-      relationships[relationshipName]['data'] ?? List();
+      relationships[relationshipName]['data'] ?? [];
 
   Iterable<String> idsFor(String relationshipName) =>
       relationships.containsKey(relationshipName)
           ? dataForHasMany(relationshipName).map((record) => record['id'])
-          : List<String>();
+          : <String>[];
 
   void setHasOne(String relationshipName, String modelId, String modelType) {
+    Map<String, dynamic> relationshipMap = {'id': modelId, 'type': modelType};
     if (relationships.containsKey(relationshipName)) {
-      relationships[relationshipName]['data']['id'] = modelId;
+      if (relationships[relationshipName]['data'] == null) {
+        relationships[relationshipName]['data'] = relationshipMap;
+      } else {
+        relationships[relationshipName]['data']['id'] = modelId;
+      }
     } else {
-      relationships[relationshipName] = {
-        'data': {'id': modelId, 'type': modelType}
-      };
+      relationships[relationshipName] = {'data': relationshipMap};
     }
   }
 
   Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) {
     ids ??= idsFor(type);
-    return (included ?? List())
+    return (included ?? [])
         .where((record) => record['type'] == type && ids.contains(record['id']))
         .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
             record['type'], record['attributes'], record['relationships']));
@@ -171,7 +174,7 @@ class JsonApiDocument {
   }
 
   void addErrorFor(String attributeName, String errorMessage) {
-    errors ??= List<Map<String, dynamic>>();
+    errors ??= <Map<String, dynamic>>[];
     errors.add({
       'source': {'pointer': "/data/attributes/$attributeName"},
       'detail': errorMessage,
@@ -196,7 +199,7 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
 
   JsonApiManyDocument(this.docs, [this.included, this.meta]) {
     meta ??= Map<String, dynamic>();
-    included ??= List();
+    included ??= [];
   }
 
   @override
