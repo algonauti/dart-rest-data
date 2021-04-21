@@ -1,3 +1,8 @@
+## [0.3.3] - April 21th, 2021
+
+* Fixed bug with `setHasOne()` method in `JsonApiAdapter`
+* Updated `List` initialization according to recent Dart 
+
 ## [0.3.2] - December 6th, 2020
 
 * Upgraded dependencies
