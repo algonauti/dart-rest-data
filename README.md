@@ -2,6 +2,8 @@
 
 The goal of this package is to make interaction with your REST APIs pleasant and concise. It currently supports [JSON:API](https://jsonapi.org/)-compliant REST APIs, but can be extended to support more formats - and you're encouraged to contribute!
 
+[![CI](https://github.com/algonauti/dart-rest-data/workflows/CI/badge.svg)](https://github.com/algonauti/dart-rest-data/actions)
+
 ## Introduction
 
 `rest_data` is inspired by [ember-data](https://github.com/emberjs/data) so it's based on 3 main abstractions:
