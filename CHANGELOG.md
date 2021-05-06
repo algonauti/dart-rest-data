@@ -1,3 +1,7 @@
+## [0.3.4] - May 6rd, 2021
+
+* Upgraded dependencies
+
 ## [0.3.3] - April 21th, 2021
 
 * Fixed bug with `setHasOne()` method in `JsonApiAdapter`
