@@ -1,4 +1,12 @@
-## [0.3.4] - May 6rd, 2021
+## [0.4.0] - July 2nd, 2021
+
+* `JsonApiAdapter` accepts an optional `useSSL` boolean argument (default: `true`).
+* Added method to clear has-one relationship: `clearHasOne()`
+* Removed author field from `pubspec.yml` (now deprecated)
+* Upgraded dependencies
+* Increased minimum Dart SDK to 2.11.0 (the latest one before null-safety)
+
+## [0.3.4] - May 6th, 2021
 
 * Upgraded dependencies
 
