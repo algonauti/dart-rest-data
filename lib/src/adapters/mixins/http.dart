@@ -7,6 +7,7 @@ import '../../exceptions.dart';
 
 mixin Http {
   String hostname;
+  bool useSSL;
   var headers = Map<String, String>();
 
   String checkAndDecode(http.Response response) {
@@ -58,36 +59,49 @@ mixin Http {
     Map<String, String> queryParams,
   }) async {
     return await _safelyRun(() async {
-      var url = Uri.https(hostname, path, queryParams);
-      return await http.get(url, headers: headers);
+      return await http.get(
+        _buildUri(path, queryParams),
+        headers: headers,
+      );
     });
   }
 
   Future<http.Response> httpPost(String path, {String body}) async {
     return await _safelyRun(() async {
-      var url = Uri.https(hostname, path);
-      return await http.post(url, headers: headers, body: body);
+      return await http.post(
+        _buildUri(path),
+        headers: headers,
+        body: body,
+      );
     });
   }
 
   Future<http.Response> httpPatch(String path, {String body}) async {
     return await _safelyRun(() async {
-      var url = Uri.https(hostname, path);
-      return await http.patch(url, headers: headers, body: body);
+      return await http.patch(
+        _buildUri(path),
+        headers: headers,
+        body: body,
+      );
     });
   }
 
   Future<http.Response> httpPut(String path, {String body}) async {
     return await _safelyRun(() async {
-      var url = Uri.https(hostname, path);
-      return await http.put(url, headers: headers, body: body);
+      return await http.put(
+        _buildUri(path),
+        headers: headers,
+        body: body,
+      );
     });
   }
 
   Future<http.Response> httpDelete(String path) async {
     return await _safelyRun(() async {
-      var url = Uri.https(hostname, path);
-      return await http.delete(url, headers: headers);
+      return await http.delete(
+        _buildUri(path),
+        headers: headers,
+      );
     });
   }
 
@@ -102,4 +116,8 @@ mixin Http {
       throw NetworkError();
     }
   }
+
+  Uri _buildUri(String path, [Map<String, String> queryParams]) => useSSL
+      ? Uri.https(hostname, path, queryParams)
+      : Uri.http(hostname, path, queryParams);
 }
