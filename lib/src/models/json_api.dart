@@ -76,6 +76,10 @@ class JsonApiModel with EquatableMixin implements Model {
     jsonApiDoc.setHasOne(relationshipName, model.id, model.type);
   }
 
+  void clearHasOne(String relationshipName) {
+    jsonApiDoc.clearHasOne(relationshipName);
+  }
+
   static DateTime toDateTime(String value) =>
       (value == null || value.isEmpty) ? null : DateTime.parse(value).toLocal();
 
