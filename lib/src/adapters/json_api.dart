@@ -4,11 +4,16 @@ import '../interfaces.dart';
 import '../serializers/json_api.dart';
 
 class JsonApiAdapter extends Adapter with Http {
-  String apiPath;
+  final String apiPath;
   Map<String, Map<String, JsonApiDocument>> _cache;
 
-  JsonApiAdapter(String hostname, this.apiPath) : super(JsonApiSerializer()) {
+  JsonApiAdapter(
+    String hostname,
+    this.apiPath, {
+    bool useSSL: true,
+  }) : super(JsonApiSerializer()) {
     this.hostname = hostname;
+    this.useSSL = useSSL;
     _cache = Map<String, Map<String, JsonApiDocument>>();
     addHeader('Content-Type', 'application/json; charset=utf-8');
   }

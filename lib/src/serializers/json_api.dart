@@ -146,6 +146,14 @@ class JsonApiDocument {
     }
   }
 
+  void clearHasOne(String relationshipName) {
+    if (relationships.containsKey(relationshipName)) {
+      relationships[relationshipName]['data'] = null;
+    } else {
+      relationships[relationshipName] = {'data': null};
+    }
+  }
+
   Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String> ids]) {
     ids ??= idsFor(type);
     return (included ?? [])
