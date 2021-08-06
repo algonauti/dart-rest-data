@@ -6,12 +6,12 @@ import 'package:http/http.dart' as http;
 import '../../exceptions.dart';
 
 mixin Http {
-  String hostname;
-  bool useSSL;
+  late String hostname;
+  late bool useSSL;
   var headers = Map<String, String>();
 
-  String checkAndDecode(http.Response response) {
-    http.Request request = response.request;
+  String? checkAndDecode(http.Response response) {
+    http.Request request = response.request as http.Request;
     String method = request.method;
     String url = request.url.toString();
     int code = response.statusCode;
@@ -56,7 +56,7 @@ mixin Http {
 
   Future<http.Response> httpGet(
     String path, {
-    Map<String, String> queryParams,
+    Map<String, String>? queryParams,
   }) async {
     return await _safelyRun(() async {
       return await http.get(
@@ -66,7 +66,7 @@ mixin Http {
     });
   }
 
-  Future<http.Response> httpPost(String path, {String body}) async {
+  Future<http.Response> httpPost(String path, {String? body}) async {
     return await _safelyRun(() async {
       return await http.post(
         _buildUri(path),
@@ -76,7 +76,7 @@ mixin Http {
     });
   }
 
-  Future<http.Response> httpPatch(String path, {String body}) async {
+  Future<http.Response> httpPatch(String path, {String? body}) async {
     return await _safelyRun(() async {
       return await http.patch(
         _buildUri(path),
@@ -86,7 +86,7 @@ mixin Http {
     });
   }
 
-  Future<http.Response> httpPut(String path, {String body}) async {
+  Future<http.Response> httpPut(String path, {String? body}) async {
     return await _safelyRun(() async {
       return await http.put(
         _buildUri(path),
@@ -117,7 +117,7 @@ mixin Http {
     }
   }
 
-  Uri _buildUri(String path, [Map<String, String> queryParams]) => useSSL
+  Uri _buildUri(String path, [Map<String, String>? queryParams]) => useSSL
       ? Uri.https(hostname, path, queryParams)
       : Uri.http(hostname, path, queryParams);
 }
