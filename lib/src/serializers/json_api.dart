@@ -56,7 +56,7 @@ class JsonApiSerializer implements Serializer {
 
 class JsonApiDocument {
   String? id;
-  String? type;
+  String type;
   Map<String, dynamic>? attributes;
   Map<String, dynamic>? relationships;
   Iterable<dynamic>? included;
@@ -108,7 +108,7 @@ class JsonApiDocument {
     }
   }
 
-  String get endpoint => type!.replaceAll(RegExp('_'), '-');
+  String get endpoint => type.replaceAll(RegExp('_'), '-');
 
   bool get isNew => id == null;
 
@@ -154,10 +154,12 @@ class JsonApiDocument {
     }
   }
 
-  Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String?>? ids]) {
+  Iterable<JsonApiDocument> includedDocs(String type,
+      [Iterable<String?>? ids]) {
     ids ??= idsFor(type);
     return (included ?? [])
-        .where((record) => record['type'] == type && ids!.contains(record['id']))
+        .where(
+            (record) => record['type'] == type && ids!.contains(record['id']))
         .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
             record['type'], record['attributes'], record['relationships']));
   }
