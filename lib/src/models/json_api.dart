@@ -51,7 +51,8 @@ class JsonApiModel with EquatableMixin implements Model {
   Iterable<String?> idsFor(String relationshipName) =>
       jsonApiDoc.idsFor(relationshipName);
 
-  Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String>? ids]) =>
+  Iterable<JsonApiDocument> includedDocs(String type,
+          [Iterable<String>? ids]) =>
       jsonApiDoc.includedDocs(type, ids);
 
   bool attributeHasErrors(String attributeName) =>
@@ -81,7 +82,7 @@ class JsonApiModel with EquatableMixin implements Model {
   }
 
   static DateTime? toDateTime(String value) =>
-      (value == null || value.isEmpty) ? null : DateTime.parse(value).toLocal();
+      (value.isEmpty) ? null : DateTime.parse(value).toLocal();
 
   static String toUtcIsoString(DateTime value) =>
       value.toUtc().toIso8601String();
