@@ -7,9 +7,9 @@ class DeserializationException implements Exception {}
 class HttpStatusException implements Exception {
   String method;
   String url;
-  String responseBody;
-  String requestBody;
-  int statusCode;
+  String? responseBody;
+  String? requestBody;
+  int? statusCode;
 
   HttpStatusException(
     this.method,
