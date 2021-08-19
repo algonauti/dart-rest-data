@@ -1,3 +1,7 @@
+## [1.0.0] - Aug 19th, 2021
+
+* Migrated to null safety
+
 ## [0.4.0] - July 2nd, 2021
 
 * `JsonApiAdapter` accepts an optional `useSSL` boolean argument (default: `true`).
