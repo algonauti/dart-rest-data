@@ -51,7 +51,7 @@ class JsonApiAdapter extends Adapter with Http {
       return Future.value(JsonApiManyDocument(<JsonApiDocument>[]));
     }
     if (forceReload == true) {
-      return await query(endpoint, _idsParam(ids));
+      return query(endpoint, _idsParam(ids));
     }
     JsonApiManyDocument cached = peekMany(endpoint, ids);
     if (cached.length != ids.length) {

@@ -58,8 +58,8 @@ mixin Http {
     String path, {
     Map<String, String>? queryParams,
   }) async {
-    return await _safelyRun(() async {
-      return await http.get(
+    return _safelyRun(() async {
+      return http.get(
         _buildUri(path, queryParams),
         headers: headers,
       );
@@ -67,8 +67,8 @@ mixin Http {
   }
 
   Future<http.Response> httpPost(String path, {String? body}) async {
-    return await _safelyRun(() async {
-      return await http.post(
+    return _safelyRun(() async {
+      return http.post(
         _buildUri(path),
         headers: headers,
         body: body,
@@ -77,8 +77,8 @@ mixin Http {
   }
 
   Future<http.Response> httpPatch(String path, {String? body}) async {
-    return await _safelyRun(() async {
-      return await http.patch(
+    return _safelyRun(() async {
+      return http.patch(
         _buildUri(path),
         headers: headers,
         body: body,
@@ -87,8 +87,8 @@ mixin Http {
   }
 
   Future<http.Response> httpPut(String path, {String? body}) async {
-    return await _safelyRun(() async {
-      return await http.put(
+    return _safelyRun(() async {
+      return http.put(
         _buildUri(path),
         headers: headers,
         body: body,
@@ -97,8 +97,8 @@ mixin Http {
   }
 
   Future<http.Response> httpDelete(String path) async {
-    return await _safelyRun(() async {
-      return await http.delete(
+    return _safelyRun(() async {
+      return http.delete(
         _buildUri(path),
         headers: headers,
       );
