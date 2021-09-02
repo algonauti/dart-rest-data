@@ -63,8 +63,9 @@ class JsonApiDocument {
   List<dynamic> errors;
 
   JsonApiDocument(this.id, this.type, this.attributes, this.relationships,
-      [this.included = const Iterable.empty()])
-      : errors = [];
+      [Iterable<dynamic>? included = null])
+      : errors = [],
+        this.included = included ?? [];
 
   JsonApiDocument.create(this.type, this.attributes,
       [Map<String, dynamic>? relationships = null])
