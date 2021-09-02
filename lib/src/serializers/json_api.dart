@@ -67,9 +67,10 @@ class JsonApiDocument {
       : errors = [];
 
   JsonApiDocument.create(this.type, this.attributes,
-      [this.relationships = const {}])
+      [Map<String, dynamic>? relationships = null])
       : errors = [],
-        included = [];
+        included = [],
+        this.relationships = relationships ?? {};
 
   JsonApiDocument.from(JsonApiDocument other)
       : this(
