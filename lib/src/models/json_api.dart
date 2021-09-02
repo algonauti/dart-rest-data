@@ -26,10 +26,10 @@ class JsonApiModel with EquatableMixin implements Model {
   JsonApiModel.shallowCopy(JsonApiModel other) : this(other.jsonApiDoc);
 
   String get endpoint => jsonApiDoc.endpoint;
-  Map<String, dynamic>? get attributes => jsonApiDoc.attributes;
-  Map<String, dynamic>? get relationships => jsonApiDoc.relationships;
-  Iterable<dynamic>? get included => jsonApiDoc.included;
-  List<dynamic>? get errors => jsonApiDoc.errors;
+  Map<String, dynamic> get attributes => jsonApiDoc.attributes;
+  Map<String, dynamic> get relationships => jsonApiDoc.relationships;
+  Iterable<dynamic> get included => jsonApiDoc.included;
+  List<dynamic> get errors => jsonApiDoc.errors;
 
   @override
   String? get id => jsonApiDoc.id;
