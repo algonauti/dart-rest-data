@@ -56,7 +56,7 @@ class JsonApiSerializer implements Serializer {
 
 class JsonApiDocument {
   String? id;
-  String type;
+  String? type;
   Map<String, dynamic> attributes;
   Map<String, dynamic> relationships;
   Iterable<dynamic> included;
@@ -114,7 +114,7 @@ class JsonApiDocument {
     }
   }
 
-  String get endpoint => type.replaceAll(RegExp('_'), '-');
+  String get endpoint => (type ?? '').replaceAll(RegExp('_'), '-');
 
   bool get isNew => id == null;
 
