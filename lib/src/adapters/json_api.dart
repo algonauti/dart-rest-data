@@ -55,8 +55,8 @@ class JsonApiAdapter extends Adapter with Http {
     }
     JsonApiManyDocument cached = peekMany(endpoint, ids);
     if (cached.length != ids.length) {
-      List<JsonApiDocument?> cachedDocs = cached.toList();
-      Iterable<String?> cachedIds = cachedDocs.map((doc) => doc!.id);
+      List<JsonApiDocument> cachedDocs = cached.toList();
+      Iterable<String?> cachedIds = cachedDocs.map((doc) => doc.id);
       Iterable<String> loadableIds = ids.where((id) => !cachedIds.contains(id));
       JsonApiManyDocument loaded =
           await query(endpoint, _idsParam(loadableIds));
@@ -220,9 +220,16 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  JsonApiManyDocument peekMany(String endpoint, Iterable<String> ids) =>
-      JsonApiManyDocument(
-          ids.map((id) => peek(endpoint, id)).where((doc) => doc != null));
+  JsonApiManyDocument peekMany(String endpoint, Iterable<String> ids) {
+    List<JsonApiDocument> cachedDocs = [];
+    ids.forEach((id) {
+      JsonApiDocument? cachedDoc = peek(endpoint, id);
+      if (cachedDoc != null) {
+        cachedDocs.add(cachedDoc);
+      }
+    });
+    return JsonApiManyDocument(cachedDocs);
+  }
 
   @override
   JsonApiManyDocument peekAll(String endpoint) {

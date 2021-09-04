@@ -207,8 +207,8 @@ class JsonApiDocument {
 
 typedef FilterFunction = bool Function(JsonApiDocument?);
 
-class JsonApiManyDocument extends Iterable<JsonApiDocument?> {
-  Iterable<JsonApiDocument?> docs;
+class JsonApiManyDocument extends Iterable<JsonApiDocument> {
+  Iterable<JsonApiDocument> docs;
   Iterable<dynamic>? included;
   Map<String, dynamic>? meta;
 
@@ -229,12 +229,12 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument?> {
   }
 
   Iterable<String?> idsForHasOne(String relationshipName) => docs
-      .map((doc) => doc!.idFor(relationshipName))
+      .map((doc) => doc.idFor(relationshipName))
       .where((id) => id != null)
       .toSet();
 
   Iterable<String?> idsForHasMany(String relationshipName) => docs
-      .map((doc) => doc!.idsFor(relationshipName))
+      .map((doc) => doc.idsFor(relationshipName))
       .expand((ids) => ids)
       .where((id) => id != null)
       .toSet();
