@@ -5,10 +5,10 @@ import '../interfaces.dart';
 
 class JsonApiSerializer implements Serializer {
   @override
-  JsonApiDocument deserialize(String? payload) {
+  JsonApiDocument deserialize(String payload) {
     try {
-      Map<String, dynamic> parsed = parse(payload!);
-      var data = parsed['data'];
+      Map<String, dynamic> parsed = parse(payload);
+      var data = parsed['data'] ?? {};
       return JsonApiDocument(data['id'], data['type'], data['attributes'],
           data['relationships'], parsed['included']);
     } on FormatException {
@@ -17,8 +17,8 @@ class JsonApiSerializer implements Serializer {
   }
 
   @override
-  JsonApiManyDocument deserializeMany(String? payload) {
-    Map<String, dynamic> parsed = parse(payload!);
+  JsonApiManyDocument deserializeMany(String payload) {
+    Map<String, dynamic> parsed = parse(payload);
     var docs = (parsed['data'] as Iterable).map((item) => JsonApiDocument(
         item['id'],
         item['type'],
@@ -29,7 +29,7 @@ class JsonApiSerializer implements Serializer {
   }
 
   @override
-  String serialize(Object? document, {bool withIncluded = false}) {
+  String serialize(Object document, {bool withIncluded = false}) {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
       Map<String, dynamic> jsonMap = {
@@ -218,9 +218,9 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   }
 
   @override
-  Iterator<JsonApiDocument?> get iterator => docs.iterator;
+  Iterator<JsonApiDocument> get iterator => docs.iterator;
 
-  void append(Iterable<JsonApiDocument?> moreDocs) {
+  void append(Iterable<JsonApiDocument> moreDocs) {
     docs = docs.followedBy(moreDocs);
   }
 

@@ -40,7 +40,7 @@ class JsonApiAdapter extends Adapter with Http {
 
   Future<JsonApiDocument> fetch(String endpoint, String id) async {
     final response = await httpGet("$apiPath/$endpoint/$id");
-    String? payload = checkAndDecode(response);
+    String payload = checkAndDecode(response) ?? '{}';
     return serializer.deserialize(payload) as JsonApiDocument;
   }
 
@@ -74,7 +74,7 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   Future<JsonApiManyDocument> findAll(String endpoint) async {
     final response = await httpGet("$apiPath/$endpoint");
-    String? payload = checkAndDecode(response);
+    String payload = checkAndDecode(response) ?? '{}';
     return _deserializeAndCacheMany(payload, endpoint);
   }
 
@@ -82,12 +82,12 @@ class JsonApiAdapter extends Adapter with Http {
   Future<JsonApiManyDocument> query(
       String endpoint, Map<String, String> params) async {
     final response = await httpGet("$apiPath/$endpoint", queryParams: params);
-    String? payload = checkAndDecode(response);
+    String payload = checkAndDecode(response) ?? '{}';
     return _deserializeAndCacheMany(payload, endpoint);
   }
 
   JsonApiManyDocument _deserializeAndCacheMany(
-      String? payload, String endpoint) {
+      String payload, String endpoint) {
     JsonApiManyDocument fetched =
         serializer.deserializeMany(payload) as JsonApiManyDocument;
     cacheMany(endpoint, fetched);
@@ -110,7 +110,7 @@ class JsonApiAdapter extends Adapter with Http {
         response = await httpPatch("$apiPath/$endpoint/${jsonApiDoc.id}",
             body: serializer.serialize(jsonApiDoc));
       }
-      String? payload = checkAndDecode(response);
+      String payload = checkAndDecode(response) ?? '{}';
       JsonApiDocument saved =
           serializer.deserialize(payload) as JsonApiDocument;
       cache(endpoint, saved);
@@ -158,7 +158,7 @@ class JsonApiAdapter extends Adapter with Http {
         "$apiPath/$endpoint/${jsonApiDoc.id}/$actionPath",
         body: serializer.serialize(jsonApiDoc),
       );
-      String? payload = checkAndDecode(response);
+      String payload = checkAndDecode(response) ?? '{}';
       JsonApiDocument updated =
           serializer.deserialize(payload) as JsonApiDocument;
       cache(endpoint, updated);
