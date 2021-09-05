@@ -1,7 +1,7 @@
 abstract class Serializer {
   String serialize(Object document);
   Object deserialize(String payload);
-  Iterable<Object?> deserializeMany(String payload);
+  Iterable<Object> deserializeMany(String payload);
 }
 
 abstract class Adapter {
