@@ -134,7 +134,7 @@ class JsonApiDocument {
   Iterable<dynamic> dataForHasMany(String relationshipName) =>
       relationships[relationshipName]['data'] ?? [];
 
-  Iterable<String?> idsFor(String relationshipName) =>
+  Iterable<String> idsFor(String relationshipName) =>
       relationships.containsKey(relationshipName)
           ? dataForHasMany(relationshipName).map((record) => record['id'])
           : <String>[];
@@ -175,7 +175,7 @@ class JsonApiDocument {
           _isAttributeError(error, attributeName) && _hasErrorDetail(error))
       : false;
 
-  Iterable<String?> errorsFor(String attributeName) => errors
+  Iterable<String> errorsFor(String attributeName) => errors
       .where((error) => _isAttributeError(error, attributeName))
       .map((error) => error['detail']);
 
@@ -238,7 +238,6 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   Iterable<String?> idsForHasMany(String relationshipName) => docs
       .map((doc) => doc.idsFor(relationshipName))
       .expand((ids) => ids)
-      .where((id) => id != null)
       .toSet();
 
   Iterable<JsonApiDocument> includedDocs(String type) => included
