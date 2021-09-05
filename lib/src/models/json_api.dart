@@ -100,11 +100,11 @@ abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
   @override
   Iterator<T> get iterator => models.iterator;
 
-  bool get hasMeta => manyDoc.meta!.isNotEmpty;
-  int? get currentPage => manyDoc.meta!['current_page'];
-  int? get pageSize => manyDoc.meta!['page_size'];
-  int? get totalPages => manyDoc.meta!['total_pages'];
-  int? get totalCount => manyDoc.meta!['total_count'];
+  bool get hasMeta => manyDoc.meta.isNotEmpty;
+  int? get currentPage => manyDoc.meta['current_page'];
+  int? get pageSize => manyDoc.meta['page_size'];
+  int? get totalPages => manyDoc.meta['total_pages'];
+  int? get totalCount => manyDoc.meta['total_count'];
 
   Iterable<JsonApiDocument> includedDocs(String type) =>
       manyDoc.includedDocs(type);

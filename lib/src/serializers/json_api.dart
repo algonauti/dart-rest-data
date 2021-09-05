@@ -209,13 +209,15 @@ typedef FilterFunction = bool Function(JsonApiDocument?);
 
 class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   Iterable<JsonApiDocument> docs;
-  Iterable<dynamic>? included;
-  Map<String, dynamic>? meta;
+  Iterable<dynamic> included;
+  Map<String, dynamic> meta;
 
-  JsonApiManyDocument(this.docs, [this.included, this.meta]) {
-    meta ??= Map<String, dynamic>();
-    included ??= [];
-  }
+  JsonApiManyDocument(
+    this.docs, [
+    Iterable<dynamic>? included,
+    Map<String, dynamic>? meta,
+  ])  : this.meta = meta ?? Map<String, dynamic>(),
+        this.included = included ?? [];
 
   @override
   Iterator<JsonApiDocument> get iterator => docs.iterator;
@@ -239,7 +241,7 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
       .where((id) => id != null)
       .toSet();
 
-  Iterable<JsonApiDocument> includedDocs(String type) => included!
+  Iterable<JsonApiDocument> includedDocs(String type) => included
       .where((record) => record['type'] == type)
       .map((record) => JsonApiDocument(record['id'], record['type'],
           record['attributes'], record['relationships']));
