@@ -160,8 +160,7 @@ class JsonApiDocument {
     }
   }
 
-  Iterable<JsonApiDocument> includedDocs(String type,
-      [Iterable<String?>? ids]) {
+  Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String>? ids]) {
     ids ??= idsFor(type);
     return included
         .where(
@@ -230,12 +229,12 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
     docs = docs.where(filterFn);
   }
 
-  Iterable<String?> idsForHasOne(String relationshipName) => docs
+  Iterable<String> idsForHasOne(String relationshipName) => docs
       .map((doc) => doc.idFor(relationshipName))
-      .where((id) => id != null)
+      .whereType<String>()
       .toSet();
 
-  Iterable<String?> idsForHasMany(String relationshipName) => docs
+  Iterable<String> idsForHasMany(String relationshipName) => docs
       .map((doc) => doc.idsFor(relationshipName))
       .expand((ids) => ids)
       .toSet();
