@@ -210,8 +210,8 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  void cacheMany(String endpoint, Iterable<Object?> documents) {
-    documents.forEach((document) => cache(endpoint, document!));
+  void cacheMany(String endpoint, Iterable<Object> documents) {
+    documents.forEach((document) => cache(endpoint, document));
   }
 
   @override
