@@ -56,7 +56,8 @@ class JsonApiAdapter extends Adapter with Http {
     JsonApiManyDocument cached = peekMany(endpoint, ids);
     if (cached.length != ids.length) {
       List<JsonApiDocument> cachedDocs = cached.toList();
-      Iterable<String?> cachedIds = cachedDocs.map((doc) => doc.id);
+      Iterable<String> cachedIds =
+          cachedDocs.map((doc) => doc.id).whereType<String>().toList();
       Iterable<String> loadableIds = ids.where((id) => !cachedIds.contains(id));
       JsonApiManyDocument loaded =
           await query(endpoint, _idsParam(loadableIds));
