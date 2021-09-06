@@ -204,7 +204,7 @@ class JsonApiDocument {
       (error['detail'] as String).isNotEmpty;
 }
 
-typedef FilterFunction = bool Function(JsonApiDocument?);
+typedef FilterFunction = bool Function(JsonApiDocument);
 
 class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   Iterable<JsonApiDocument> docs;
