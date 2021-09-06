@@ -139,7 +139,7 @@ class JsonApiDocument {
           ? dataForHasMany(relationshipName).map((record) => record['id'])
           : <String>[];
 
-  void setHasOne(String relationshipName, String? modelId, String? modelType) {
+  void setHasOne(String relationshipName, String modelId, String modelType) {
     Map<String, dynamic> relationshipMap = {'id': modelId, 'type': modelType};
     if (relationships.containsKey(relationshipName)) {
       if (relationships[relationshipName]['data'] == null) {

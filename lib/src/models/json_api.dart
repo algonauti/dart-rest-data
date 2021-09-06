@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../exceptions.dart';
 import '../interfaces.dart';
 import '../serializers/json_api.dart';
 
@@ -74,7 +75,15 @@ class JsonApiModel with EquatableMixin implements Model {
   }
 
   void setHasOne(String relationshipName, JsonApiModel model) {
-    jsonApiDoc.setHasOne(relationshipName, model.id, model.type);
+    if (model.type == null) {
+      throw DataStructureException(
+          'cannot set model with null id on has-one relationship');
+    }
+    if (model.id == null) {
+      throw DataStructureException(
+          'cannot set model with null id on has-one relationship');
+    }
+    jsonApiDoc.setHasOne(relationshipName, model.id!, model.type!);
   }
 
   void clearHasOne(String relationshipName) {

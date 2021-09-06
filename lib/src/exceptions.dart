@@ -128,3 +128,7 @@ class _ExceptionWithMessage implements Exception {
 class CachingException extends _ExceptionWithMessage {
   CachingException(String message) : super(message);
 }
+
+class DataStructureException extends _ExceptionWithMessage {
+  DataStructureException(String message) : super(message);
+}
