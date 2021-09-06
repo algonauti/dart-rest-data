@@ -183,7 +183,7 @@ class JsonApiAdapter extends Adapter with Http {
         _cache[endpoint] ??= Map<String, JsonApiDocument>();
         _cache[endpoint]![jsonApiDoc.id!] = jsonApiDoc;
       } else {
-        throw CachingException();
+        throw CachingException('cannot cache document with null id');
       }
     } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');

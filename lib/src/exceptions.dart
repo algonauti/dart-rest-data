@@ -117,4 +117,14 @@ class NoNetworkError implements Exception {}
 
 class InvalidDataReceived implements Exception {}
 
-class CachingException implements Exception {}
+class _ExceptionWithMessage implements Exception {
+  String message;
+
+  _ExceptionWithMessage(this.message);
+
+  String toString() => '${this.runtimeType}: ${this.message}';
+}
+
+class CachingException extends _ExceptionWithMessage {
+  CachingException(String message) : super(message);
+}
