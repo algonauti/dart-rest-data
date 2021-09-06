@@ -5,7 +5,7 @@ import '../serializers/json_api.dart';
 
 class JsonApiAdapter extends Adapter with Http {
   final String apiPath;
-  late Map<String, Map<String?, JsonApiDocument>> _cache;
+  late Map<String, Map<String, JsonApiDocument>> _cache;
 
   JsonApiAdapter(
     String hostname,
@@ -14,7 +14,7 @@ class JsonApiAdapter extends Adapter with Http {
   }) : super(JsonApiSerializer()) {
     this.hostname = hostname;
     this.useSSL = useSSL;
-    _cache = Map<String, Map<String?, JsonApiDocument>>();
+    _cache = Map<String, Map<String, JsonApiDocument>>();
     addHeader('Content-Type', 'application/json; charset=utf-8');
   }
 
@@ -179,8 +179,12 @@ class JsonApiAdapter extends Adapter with Http {
   void cache(String endpoint, Object document) {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
-      _cache[endpoint] ??= Map<String?, JsonApiDocument>();
-      _cache[endpoint]![jsonApiDoc.id] = jsonApiDoc;
+      if (jsonApiDoc.id != null) {
+        _cache[endpoint] ??= Map<String, JsonApiDocument>();
+        _cache[endpoint]![jsonApiDoc.id!] = jsonApiDoc;
+      } else {
+        throw CachingException();
+      }
     } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
     }

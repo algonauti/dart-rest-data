@@ -116,3 +116,5 @@ class NetworkError implements Exception {}
 class NoNetworkError implements Exception {}
 
 class InvalidDataReceived implements Exception {}
+
+class CachingException implements Exception {}
