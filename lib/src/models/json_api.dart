@@ -38,12 +38,19 @@ class JsonApiModel with EquatableMixin implements Model {
   @override
   String? get type => jsonApiDoc.type;
 
-  bool get isNew => jsonApiDoc.isNew;
+  @override
+  T getAttribute<T>(String key) => jsonApiDoc.getAttribute<T>(key);
 
-  bool get hasErrors => jsonApiDoc.hasErrors;
+  @override
+  void setAttribute<T>(String key, T value) =>
+      jsonApiDoc.setAttribute<T>(key, value);
 
   @override
   String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
+
+  bool get isNew => jsonApiDoc.isNew;
+
+  bool get hasErrors => jsonApiDoc.hasErrors;
 
   String? idFor(String relationshipName) => jsonApiDoc.idFor(relationshipName);
   String? typeFor(String relationshipName) =>

@@ -118,6 +118,35 @@ class JsonApiDocument {
 
   bool get isNew => id == null;
 
+  T getAttribute<T>(String key) {
+    final rawAttribute = attributes[key];
+
+    switch (T) {
+      case bool:
+        return rawAttribute ?? false;
+      case String:
+        return rawAttribute ?? '';
+      case int:
+        return rawAttribute ?? 0;
+      case double:
+        return rawAttribute ?? 0.0;
+      default:
+        return rawAttribute;
+    }
+  }
+
+  void setAttribute<T>(String key, T value) {
+    var rawValue;
+    switch (T) {
+      case String:
+        rawValue = value == '' ? null : value;
+        break;
+      default:
+        rawValue = value;
+    }
+    attributes[key] = rawValue;
+  }
+
   bool get hasErrors => errors.isNotEmpty;
 
   Map<String, dynamic> dataForHasOne(String relationshipName) =>

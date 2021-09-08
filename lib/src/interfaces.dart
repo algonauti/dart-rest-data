@@ -32,4 +32,6 @@ abstract class Model {
   String? get id;
   String? get type;
   String serialize();
+  T getAttribute<T>(String key);
+  void setAttribute<T>(String key, T value);
 }
