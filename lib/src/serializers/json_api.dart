@@ -121,18 +121,26 @@ class JsonApiDocument {
   T getAttribute<T>(String key) {
     final rawAttribute = attributes[key];
 
-    switch (T) {
-      case bool:
+    switch (T.toString()) {
+      case 'bool':
         return rawAttribute ?? false;
-      case String:
+      case 'String':
         return rawAttribute ?? '';
-      case int:
+      case 'int':
         return rawAttribute ?? 0;
-      case double:
+      case 'double':
         return rawAttribute ?? 0.0;
-      default:
-        return rawAttribute;
+      case 'List<bool>':
+        return (rawAttribute as List).cast<bool>() as T;
+      case 'List<String>':
+        return (rawAttribute as List).cast<String>() as T;
+      case 'List<int>':
+        return (rawAttribute as List).cast<int>() as T;
+      case 'List<double>':
+        return (rawAttribute as List).cast<double>() as T;
     }
+
+    return rawAttribute;
   }
 
   void setAttribute<T>(String key, T value) {
