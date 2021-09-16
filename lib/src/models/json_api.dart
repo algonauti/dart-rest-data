@@ -84,7 +84,7 @@ class JsonApiModel with EquatableMixin implements Model {
   void setHasOne(String relationshipName, JsonApiModel model) {
     if (model.type == null) {
       throw DataStructureException(
-          'cannot set model with null id on has-one relationship');
+          'cannot set model with null type on has-one relationship');
     }
     if (model.id == null) {
       throw DataStructureException(
