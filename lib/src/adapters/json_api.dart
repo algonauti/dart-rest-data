@@ -226,13 +226,10 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   JsonApiManyDocument peekMany(String endpoint, Iterable<String> ids) {
-    List<JsonApiDocument> cachedDocs = [];
-    ids.forEach((id) {
-      JsonApiDocument? cachedDoc = peek(endpoint, id);
-      if (cachedDoc != null) {
-        cachedDocs.add(cachedDoc);
-      }
-    });
+    List<JsonApiDocument> cachedDocs = ids
+        .map((id) => peek(endpoint, id))
+        .whereType<JsonApiDocument>()
+        .toList();
     return JsonApiManyDocument(cachedDocs);
   }
 
