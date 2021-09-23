@@ -47,14 +47,14 @@ class Address extends JsonApiModel {
 
   // Attributes
 
-  String get street => attributes['street'];
-  set street(String value) => attributes['street'] = value;
+  String get street => getAttribute<String>('street');
+  set street(String value) => setAttribute<String>('street', value);
 
-  String get city => attributes['city'];
-  set city(String value) => attributes['city'] = value;
+  String get city => getAttribute<String>('city');
+  set city(String value) => setAttribute<String>('city', value);
 
-  String get zip => attributes['zip'];
-  set zip(String value) => attributes['zip'] = value;
+  String get zip => getAttribute<String>('zip');
+  set zip(String value) => setAttribute<String>('zip', value);
 
   // Has-One Relationships
 
