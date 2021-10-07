@@ -1,3 +1,8 @@
+## [1.1.0] - Oct 7th, 2021
+
+* Fine-tuning after automatic migration to null safety
+* Introduced `getAttribute<T>()` and `setAttribute<T>()` methods
+
 ## [1.0.0] - Aug 19th, 2021
 
 * Migrated to null safety
