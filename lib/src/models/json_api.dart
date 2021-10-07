@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../exceptions.dart';
 import '../interfaces.dart';
 import '../serializers/json_api.dart';
 
@@ -37,18 +38,25 @@ class JsonApiModel with EquatableMixin implements Model {
   @override
   String? get type => jsonApiDoc.type;
 
-  bool get isNew => jsonApiDoc.isNew;
+  @override
+  T getAttribute<T>(String key) => jsonApiDoc.getAttribute<T>(key);
 
-  bool get hasErrors => jsonApiDoc.hasErrors;
+  @override
+  void setAttribute<T>(String key, T value) =>
+      jsonApiDoc.setAttribute<T>(key, value);
 
   @override
   String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
+
+  bool get isNew => jsonApiDoc.isNew;
+
+  bool get hasErrors => jsonApiDoc.hasErrors;
 
   String? idFor(String relationshipName) => jsonApiDoc.idFor(relationshipName);
   String? typeFor(String relationshipName) =>
       jsonApiDoc.typeFor(relationshipName);
 
-  Iterable<String?> idsFor(String relationshipName) =>
+  Iterable<String> idsFor(String relationshipName) =>
       jsonApiDoc.idsFor(relationshipName);
 
   Iterable<JsonApiDocument> includedDocs(String type,
@@ -58,7 +66,7 @@ class JsonApiModel with EquatableMixin implements Model {
   bool attributeHasErrors(String attributeName) =>
       jsonApiDoc.attributeHasErrors(attributeName);
 
-  Iterable<String?> errorsFor(String attributeName) =>
+  Iterable<String> errorsFor(String attributeName) =>
       jsonApiDoc.errorsFor(attributeName);
 
   void clearErrorsFor(String attributeName) {
@@ -74,7 +82,15 @@ class JsonApiModel with EquatableMixin implements Model {
   }
 
   void setHasOne(String relationshipName, JsonApiModel model) {
-    jsonApiDoc.setHasOne(relationshipName, model.id, model.type);
+    if (model.type == null) {
+      throw DataStructureException(
+          'cannot set model with null type on has-one relationship');
+    }
+    if (model.id == null) {
+      throw DataStructureException(
+          'cannot set model with null id on has-one relationship');
+    }
+    jsonApiDoc.setHasOne(relationshipName, model.id!, model.type!);
   }
 
   void clearHasOne(String relationshipName) {
@@ -100,11 +116,11 @@ abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
   @override
   Iterator<T> get iterator => models.iterator;
 
-  bool get hasMeta => manyDoc.meta!.isNotEmpty;
-  int? get currentPage => manyDoc.meta!['current_page'];
-  int? get pageSize => manyDoc.meta!['page_size'];
-  int? get totalPages => manyDoc.meta!['total_pages'];
-  int? get totalCount => manyDoc.meta!['total_count'];
+  bool get hasMeta => manyDoc.meta.isNotEmpty;
+  int? get currentPage => manyDoc.meta['current_page'];
+  int? get pageSize => manyDoc.meta['page_size'];
+  int? get totalPages => manyDoc.meta['total_pages'];
+  int? get totalCount => manyDoc.meta['total_count'];
 
   Iterable<JsonApiDocument> includedDocs(String type) =>
       manyDoc.includedDocs(type);

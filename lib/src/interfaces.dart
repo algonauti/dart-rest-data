@@ -1,7 +1,7 @@
 abstract class Serializer {
-  String serialize(Object? document);
-  Object deserialize(String? payload);
-  Iterable<Object?> deserializeMany(String? payload);
+  String serialize(Object document);
+  Object deserialize(String payload);
+  Iterable<Object> deserializeMany(String payload);
 }
 
 abstract class Adapter {
@@ -10,10 +10,10 @@ abstract class Adapter {
   Adapter(this.serializer);
 
   Future<Object> find(String endpoint, String id, {bool forceReload = false});
-  Future<Iterable<Object?>> findMany(String endpoint, Iterable<String> ids,
+  Future<Iterable<Object>> findMany(String endpoint, Iterable<String> ids,
       {bool forceReload = false});
-  Future<Iterable<Object?>> findAll(String endpoint);
-  Future<Iterable<Object?>> query(String endpoint, Map<String, String> params);
+  Future<Iterable<Object>> findAll(String endpoint);
+  Future<Iterable<Object>> query(String endpoint, Map<String, String> params);
   Future<Object> save(String endpoint, Object document);
   Future<void> delete(String endpoint, Object document);
   Future<Object> memberPutAction(
@@ -24,12 +24,14 @@ abstract class Adapter {
   void clearCache();
   void cacheMany(String endpoint, Iterable<Object> documents);
   Object? peek(String endpoint, String id);
-  Iterable<Object?> peekMany(String endpoint, Iterable<String> ids);
-  Iterable<Object?> peekAll(String endpoint);
+  Iterable<Object> peekMany(String endpoint, Iterable<String> ids);
+  Iterable<Object> peekAll(String endpoint);
 }
 
 abstract class Model {
   String? get id;
   String? get type;
   String serialize();
+  T getAttribute<T>(String key);
+  void setAttribute<T>(String key, T value);
 }

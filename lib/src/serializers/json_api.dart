@@ -5,10 +5,10 @@ import '../interfaces.dart';
 
 class JsonApiSerializer implements Serializer {
   @override
-  JsonApiDocument deserialize(String? payload) {
+  JsonApiDocument deserialize(String payload) {
     try {
-      Map<String, dynamic> parsed = parse(payload!);
-      var data = parsed['data'];
+      Map<String, dynamic> parsed = parse(payload);
+      var data = parsed['data'] ?? {};
       return JsonApiDocument(data['id'], data['type'], data['attributes'],
           data['relationships'], parsed['included']);
     } on FormatException {
@@ -17,8 +17,8 @@ class JsonApiSerializer implements Serializer {
   }
 
   @override
-  JsonApiManyDocument deserializeMany(String? payload) {
-    Map<String, dynamic> parsed = parse(payload!);
+  JsonApiManyDocument deserializeMany(String payload) {
+    Map<String, dynamic> parsed = parse(payload);
     var docs = (parsed['data'] as Iterable).map((item) => JsonApiDocument(
         item['id'],
         item['type'],
@@ -29,7 +29,7 @@ class JsonApiSerializer implements Serializer {
   }
 
   @override
-  String serialize(Object? document, {bool withIncluded = false}) {
+  String serialize(Object document, {bool withIncluded = false}) {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
       Map<String, dynamic> jsonMap = {
@@ -56,7 +56,7 @@ class JsonApiSerializer implements Serializer {
 
 class JsonApiDocument {
   String? id;
-  String type;
+  String? type;
   Map<String, dynamic> attributes;
   Map<String, dynamic> relationships;
   Iterable<dynamic> included;
@@ -114,9 +114,46 @@ class JsonApiDocument {
     }
   }
 
-  String get endpoint => type.replaceAll(RegExp('_'), '-');
+  String get endpoint => (type ?? '').replaceAll(RegExp('_'), '-');
 
   bool get isNew => id == null;
+
+  T getAttribute<T>(String key) {
+    final rawAttribute = attributes[key];
+
+    switch (T.toString()) {
+      case 'bool':
+        return rawAttribute ?? false;
+      case 'String':
+        return rawAttribute ?? '';
+      case 'int':
+        return rawAttribute ?? 0;
+      case 'double':
+        return rawAttribute ?? 0.0;
+      case 'List<bool>':
+        return (rawAttribute as List).cast<bool>() as T;
+      case 'List<String>':
+        return (rawAttribute as List).cast<String>() as T;
+      case 'List<int>':
+        return (rawAttribute as List).cast<int>() as T;
+      case 'List<double>':
+        return (rawAttribute as List).cast<double>() as T;
+    }
+
+    return rawAttribute;
+  }
+
+  void setAttribute<T>(String key, T value) {
+    var rawValue;
+    switch (T) {
+      case String:
+        rawValue = value == '' ? null : value;
+        break;
+      default:
+        rawValue = value;
+    }
+    attributes[key] = rawValue;
+  }
 
   bool get hasErrors => errors.isNotEmpty;
 
@@ -134,12 +171,12 @@ class JsonApiDocument {
   Iterable<dynamic> dataForHasMany(String relationshipName) =>
       relationships[relationshipName]['data'] ?? [];
 
-  Iterable<String?> idsFor(String relationshipName) =>
+  Iterable<String> idsFor(String relationshipName) =>
       relationships.containsKey(relationshipName)
           ? dataForHasMany(relationshipName).map((record) => record['id'])
           : <String>[];
 
-  void setHasOne(String relationshipName, String? modelId, String? modelType) {
+  void setHasOne(String relationshipName, String modelId, String modelType) {
     Map<String, dynamic> relationshipMap = {'id': modelId, 'type': modelType};
     if (relationships.containsKey(relationshipName)) {
       if (relationships[relationshipName]['data'] == null) {
@@ -160,8 +197,7 @@ class JsonApiDocument {
     }
   }
 
-  Iterable<JsonApiDocument> includedDocs(String type,
-      [Iterable<String?>? ids]) {
+  Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String>? ids]) {
     ids ??= idsFor(type);
     return included
         .where(
@@ -175,7 +211,7 @@ class JsonApiDocument {
           _isAttributeError(error, attributeName) && _hasErrorDetail(error))
       : false;
 
-  Iterable<String?> errorsFor(String attributeName) => errors
+  Iterable<String> errorsFor(String attributeName) => errors
       .where((error) => _isAttributeError(error, attributeName))
       .map((error) => error['detail']);
 
@@ -205,22 +241,24 @@ class JsonApiDocument {
       (error['detail'] as String).isNotEmpty;
 }
 
-typedef FilterFunction = bool Function(JsonApiDocument?);
+typedef FilterFunction = bool Function(JsonApiDocument);
 
-class JsonApiManyDocument extends Iterable<JsonApiDocument?> {
-  Iterable<JsonApiDocument?> docs;
-  Iterable<dynamic>? included;
-  Map<String, dynamic>? meta;
+class JsonApiManyDocument extends Iterable<JsonApiDocument> {
+  Iterable<JsonApiDocument> docs;
+  Iterable<dynamic> included;
+  Map<String, dynamic> meta;
 
-  JsonApiManyDocument(this.docs, [this.included, this.meta]) {
-    meta ??= Map<String, dynamic>();
-    included ??= [];
-  }
+  JsonApiManyDocument(
+    this.docs, [
+    Iterable<dynamic>? included,
+    Map<String, dynamic>? meta,
+  ])  : this.meta = meta ?? Map<String, dynamic>(),
+        this.included = included ?? [];
 
   @override
-  Iterator<JsonApiDocument?> get iterator => docs.iterator;
+  Iterator<JsonApiDocument> get iterator => docs.iterator;
 
-  void append(Iterable<JsonApiDocument?> moreDocs) {
+  void append(Iterable<JsonApiDocument> moreDocs) {
     docs = docs.followedBy(moreDocs);
   }
 
@@ -228,18 +266,17 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument?> {
     docs = docs.where(filterFn);
   }
 
-  Iterable<String?> idsForHasOne(String relationshipName) => docs
-      .map((doc) => doc!.idFor(relationshipName))
-      .where((id) => id != null)
+  Iterable<String> idsForHasOne(String relationshipName) => docs
+      .map((doc) => doc.idFor(relationshipName))
+      .whereType<String>()
       .toSet();
 
-  Iterable<String?> idsForHasMany(String relationshipName) => docs
-      .map((doc) => doc!.idsFor(relationshipName))
+  Iterable<String> idsForHasMany(String relationshipName) => docs
+      .map((doc) => doc.idsFor(relationshipName))
       .expand((ids) => ids)
-      .where((id) => id != null)
       .toSet();
 
-  Iterable<JsonApiDocument> includedDocs(String type) => included!
+  Iterable<JsonApiDocument> includedDocs(String type) => included
       .where((record) => record['type'] == type)
       .map((record) => JsonApiDocument(record['id'], record['type'],
           record['attributes'], record['relationships']));

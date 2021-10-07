@@ -5,7 +5,7 @@ import '../serializers/json_api.dart';
 
 class JsonApiAdapter extends Adapter with Http {
   final String apiPath;
-  late Map<String, Map<String?, JsonApiDocument>> _cache;
+  late Map<String, Map<String, JsonApiDocument>> _cache;
 
   JsonApiAdapter(
     String hostname,
@@ -14,7 +14,7 @@ class JsonApiAdapter extends Adapter with Http {
   }) : super(JsonApiSerializer()) {
     this.hostname = hostname;
     this.useSSL = useSSL;
-    _cache = Map<String, Map<String?, JsonApiDocument>>();
+    _cache = Map<String, Map<String, JsonApiDocument>>();
     addHeader('Content-Type', 'application/json; charset=utf-8');
   }
 
@@ -40,7 +40,7 @@ class JsonApiAdapter extends Adapter with Http {
 
   Future<JsonApiDocument> fetch(String endpoint, String id) async {
     final response = await httpGet("$apiPath/$endpoint/$id");
-    String? payload = checkAndDecode(response);
+    String payload = checkAndDecode(response) ?? '{}';
     return serializer.deserialize(payload) as JsonApiDocument;
   }
 
@@ -55,8 +55,9 @@ class JsonApiAdapter extends Adapter with Http {
     }
     JsonApiManyDocument cached = peekMany(endpoint, ids);
     if (cached.length != ids.length) {
-      List<JsonApiDocument?> cachedDocs = cached.toList();
-      Iterable<String?> cachedIds = cachedDocs.map((doc) => doc!.id);
+      List<JsonApiDocument> cachedDocs = cached.toList();
+      Iterable<String> cachedIds =
+          cachedDocs.map((doc) => doc.id).whereType<String>().toList();
       Iterable<String> loadableIds = ids.where((id) => !cachedIds.contains(id));
       JsonApiManyDocument loaded =
           await query(endpoint, _idsParam(loadableIds));
@@ -74,7 +75,7 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   Future<JsonApiManyDocument> findAll(String endpoint) async {
     final response = await httpGet("$apiPath/$endpoint");
-    String? payload = checkAndDecode(response);
+    String payload = checkAndDecode(response) ?? '{}';
     return _deserializeAndCacheMany(payload, endpoint);
   }
 
@@ -82,12 +83,12 @@ class JsonApiAdapter extends Adapter with Http {
   Future<JsonApiManyDocument> query(
       String endpoint, Map<String, String> params) async {
     final response = await httpGet("$apiPath/$endpoint", queryParams: params);
-    String? payload = checkAndDecode(response);
+    String payload = checkAndDecode(response) ?? '{}';
     return _deserializeAndCacheMany(payload, endpoint);
   }
 
   JsonApiManyDocument _deserializeAndCacheMany(
-      String? payload, String endpoint) {
+      String payload, String endpoint) {
     JsonApiManyDocument fetched =
         serializer.deserializeMany(payload) as JsonApiManyDocument;
     cacheMany(endpoint, fetched);
@@ -110,7 +111,7 @@ class JsonApiAdapter extends Adapter with Http {
         response = await httpPatch("$apiPath/$endpoint/${jsonApiDoc.id}",
             body: serializer.serialize(jsonApiDoc));
       }
-      String? payload = checkAndDecode(response);
+      String payload = checkAndDecode(response) ?? '{}';
       JsonApiDocument saved =
           serializer.deserialize(payload) as JsonApiDocument;
       cache(endpoint, saved);
@@ -158,7 +159,7 @@ class JsonApiAdapter extends Adapter with Http {
         "$apiPath/$endpoint/${jsonApiDoc.id}/$actionPath",
         body: serializer.serialize(jsonApiDoc),
       );
-      String? payload = checkAndDecode(response);
+      String payload = checkAndDecode(response) ?? '{}';
       JsonApiDocument updated =
           serializer.deserialize(payload) as JsonApiDocument;
       cache(endpoint, updated);
@@ -178,8 +179,12 @@ class JsonApiAdapter extends Adapter with Http {
   void cache(String endpoint, Object document) {
     try {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
-      _cache[endpoint] ??= Map<String?, JsonApiDocument>();
-      _cache[endpoint]![jsonApiDoc.id] = jsonApiDoc;
+      if (jsonApiDoc.id != null) {
+        _cache[endpoint] ??= Map<String, JsonApiDocument>();
+        _cache[endpoint]![jsonApiDoc.id!] = jsonApiDoc;
+      } else {
+        throw CachingException('cannot cache document with null id');
+      }
     } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
@@ -209,8 +214,8 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  void cacheMany(String endpoint, Iterable<Object?> documents) {
-    documents.forEach((document) => cache(endpoint, document!));
+  void cacheMany(String endpoint, Iterable<Object> documents) {
+    documents.forEach((document) => cache(endpoint, document));
   }
 
   @override
@@ -220,9 +225,13 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  JsonApiManyDocument peekMany(String endpoint, Iterable<String> ids) =>
-      JsonApiManyDocument(
-          ids.map((id) => peek(endpoint, id)).where((doc) => doc != null));
+  JsonApiManyDocument peekMany(String endpoint, Iterable<String> ids) {
+    List<JsonApiDocument> cachedDocs = ids
+        .map((id) => peek(endpoint, id))
+        .whereType<JsonApiDocument>()
+        .toList();
+    return JsonApiManyDocument(cachedDocs);
+  }
 
   @override
   JsonApiManyDocument peekAll(String endpoint) {
