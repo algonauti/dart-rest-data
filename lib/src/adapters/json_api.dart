@@ -20,38 +20,38 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   Future<JsonApiDocument> find(String endpoint, String id,
-      {bool forceReload = false}) async {
-    if (forceReload == true) {
-      return fetchAndCache(endpoint, id);
+      {bool forceReload = false, Map<String, String> queryParams = const {}}) async {
+    if (forceReload == true || queryParams.isNotEmpty) {
+      return fetchAndCache(endpoint, id, queryParams);
     }
     JsonApiDocument? cached = peek(endpoint, id);
     if (cached != null) {
       return cached;
     } else {
-      return fetchAndCache(endpoint, id);
+      return fetchAndCache(endpoint, id, queryParams);
     }
   }
 
-  Future<JsonApiDocument> fetchAndCache(String endpoint, String id) async {
-    JsonApiDocument fetched = await fetch(endpoint, id);
+  Future<JsonApiDocument> fetchAndCache(String endpoint, String id, Map<String, String> queryParams) async {
+    JsonApiDocument fetched = await fetch(endpoint, id, queryParams);
     cache(endpoint, fetched);
     return fetched;
   }
 
-  Future<JsonApiDocument> fetch(String endpoint, String id) async {
-    final response = await httpGet("$apiPath/$endpoint/$id");
+  Future<JsonApiDocument> fetch(String endpoint, String id, Map<String, String> queryParams) async {
+    final response = await httpGet("$apiPath/$endpoint/$id", queryParams: queryParams);
     String payload = checkAndDecode(response) ?? '{}';
     return serializer.deserialize(payload) as JsonApiDocument;
   }
 
   @override
   Future<JsonApiManyDocument> findMany(String endpoint, Iterable<String> ids,
-      {bool forceReload = false}) async {
+      {bool forceReload = false, Map<String, String> queryParams = const {}}) async {
     if (ids.isEmpty) {
       return Future.value(JsonApiManyDocument(<JsonApiDocument>[]));
     }
-    if (forceReload == true) {
-      return await query(endpoint, _idsParam(ids));
+    if (forceReload == true || queryParams.isNotEmpty) {
+      return await query(endpoint, {...queryParams, ..._idsParam(ids)});
     }
     JsonApiManyDocument cached = peekMany(endpoint, ids);
     if (cached.length != ids.length) {
@@ -60,7 +60,7 @@ class JsonApiAdapter extends Adapter with Http {
           cachedDocs.map((doc) => doc.id).whereType<String>().toList();
       Iterable<String> loadableIds = ids.where((id) => !cachedIds.contains(id));
       JsonApiManyDocument loaded =
-          await query(endpoint, _idsParam(loadableIds));
+          await query(endpoint, {...queryParams, ..._idsParam(loadableIds)});
       if (cachedDocs.isNotEmpty) loaded.append(cachedDocs);
       return loaded;
     } else {
@@ -73,8 +73,8 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future<JsonApiManyDocument> findAll(String endpoint) async {
-    final response = await httpGet("$apiPath/$endpoint");
+  Future<JsonApiManyDocument> findAll(String endpoint, {Map<String, String> queryParams = const {}}) async {
+    final response = await httpGet("$apiPath/$endpoint", queryParams: queryParams);
     String payload = checkAndDecode(response) ?? '{}';
     return _deserializeAndCacheMany(payload, endpoint);
   }
