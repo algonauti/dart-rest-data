@@ -17,7 +17,7 @@ mixin Http {
     int code = response.statusCode;
     String responseBody = response.body;
     String requestBody = request.body;
-    if (code == 200) {
+    if (code == 200 || code == 201) {
       try {
         return utf8.decode(response.bodyBytes);
       } on FormatException {
