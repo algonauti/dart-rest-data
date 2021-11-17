@@ -131,13 +131,21 @@ class JsonApiDocument {
       case 'double':
         return rawAttribute ?? 0.0;
       case 'List<bool>':
-        return (rawAttribute as List).cast<bool>() as T;
+        return rawAttribute == null
+            ? List<bool>.empty() as T
+            : (rawAttribute as List).cast<bool>() as T;
       case 'List<String>':
-        return (rawAttribute as List).cast<String>() as T;
+        return rawAttribute == null
+            ? List<String>.empty() as T
+            : (rawAttribute as List).cast<String>() as T;
       case 'List<int>':
-        return (rawAttribute as List).cast<int>() as T;
+        return rawAttribute == null
+            ? List<int>.empty() as T
+            : (rawAttribute as List).cast<int>() as T;
       case 'List<double>':
-        return (rawAttribute as List).cast<double>() as T;
+        return rawAttribute == null
+            ? List<double>.empty() as T
+            : (rawAttribute as List).cast<double>() as T;
     }
 
     return rawAttribute;
