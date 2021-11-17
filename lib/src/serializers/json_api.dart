@@ -83,7 +83,7 @@ class JsonApiDocument {
           other.type,
           Map<String, dynamic>.from(other.attributes),
           _deepCopyRelationships(other.relationships),
-          List.from(other.included),
+          other.included,
         );
 
   static _deepCopyRelationships(other) {
