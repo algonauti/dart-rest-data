@@ -36,23 +36,27 @@ void main() {
     expect(adapter, TypeMatcher<JsonApiAdapter>());
   });
 
-  test('access List attributes', () {
+  group('getAttribute()', () {
     Model model = JsonApiModel(createJsonApiDocument());
-    expect(
-      model.getAttribute<List<String>>('attribute_list_string'),
-      isA<List<String>>(),
-    );
-    expect(
-      model.getAttribute<List<bool>>('attribute_list_bool'),
-      isA<List<bool>>(),
-    );
-    expect(
-      model.getAttribute<List<int>>('attribute_list_int'),
-      isA<List<int>>(),
-    );
-    expect(
-      model.getAttribute<List<double>>('attribute_list_double'),
-      isA<List<double>>(),
-    );
+
+    test('List<String>', () {
+      var value = model.getAttribute<List<String>>('attribute_list_string');
+      expect(value, isA<List<String>>());
+    });
+
+    test('List<bool>', () {
+      var value = model.getAttribute<List<bool>>('attribute_list_bool');
+      expect(value, isA<List<bool>>());
+    });
+
+    test('List<int>', () {
+      var value = model.getAttribute<List<int>>('attribute_list_int');
+      expect(value, isA<List<int>>());
+    });
+
+    test('List<double>', () {
+      var value = model.getAttribute<List<double>>('attribute_list_double');
+      expect(value, isA<List<double>>());
+    });
   });
 }
