@@ -34,7 +34,6 @@ class JsonApiSerializer implements Serializer {
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
       Map<String, dynamic> jsonMap = {
         'data': {
-          'id': jsonApiDoc.id,
           'type': jsonApiDoc.type,
           'attributes': jsonApiDoc.attributes,
           'relationships': jsonApiDoc.relationships,
@@ -42,6 +41,9 @@ class JsonApiSerializer implements Serializer {
       };
       if (withIncluded) {
         jsonMap['included'] = jsonApiDoc.included;
+      }
+      if (jsonApiDoc.id != null) {
+        jsonMap['data']['id'] = jsonApiDoc.id;
       }
       return json.encode(jsonMap);
     } on TypeError {
