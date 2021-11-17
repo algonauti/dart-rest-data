@@ -10,6 +10,7 @@ void main() {
             'attribute_list_bool': [true, false],
             'attribute_list_int': [1, 2],
             'attribute_list_double': [0.0, -2.5],
+            'null_attribute': null,
           }, {
             'has_one_relationship': {
               'data': {'id': 'unique_ID_2', 'type': 'model_type_2'}
@@ -39,24 +40,68 @@ void main() {
   group('getAttribute()', () {
     Model model = JsonApiModel(createJsonApiDocument());
 
-    test('List<String>', () {
-      var value = model.getAttribute<List<String>>('attribute_list_string');
-      expect(value, isA<List<String>>());
+    group('List<String>', () {
+      test('non-null', () {
+        var value = model.getAttribute<List<String>>('attribute_list_string');
+        expect(value, isA<List<String>>());
+        List<String> list = value.cast<String>();
+        expect(list.length, 2);
+      });
+
+      test('null', () {
+        var value = model.getAttribute<List<String>>('null_attribute');
+        expect(value, isA<List<String>>());
+        List<String> list = value.cast<String>();
+        expect(list.isEmpty, true);
+      });
     });
 
-    test('List<bool>', () {
-      var value = model.getAttribute<List<bool>>('attribute_list_bool');
-      expect(value, isA<List<bool>>());
+    group('List<bool>', () {
+      test('non-null', () {
+        var value = model.getAttribute<List<bool>>('attribute_list_bool');
+        expect(value, isA<List<bool>>());
+        List<bool> list = value.cast<bool>();
+        expect(list.length, 2);
+      });
+
+      test('null', () {
+        var value = model.getAttribute<List<bool>>('null_attribute');
+        expect(value, isA<List<bool>>());
+        List<bool> list = value.cast<bool>();
+        expect(list.isEmpty, true);
+      });
     });
 
-    test('List<int>', () {
-      var value = model.getAttribute<List<int>>('attribute_list_int');
-      expect(value, isA<List<int>>());
+    group('List<int>', () {
+      test('non-null', () {
+        var value = model.getAttribute<List<int>>('attribute_list_int');
+        expect(value, isA<List<int>>());
+        List<int> list = value.cast<int>();
+        expect(list.length, 2);
+      });
+
+      test('null', () {
+        var value = model.getAttribute<List<int>>('null_attribute');
+        expect(value, isA<List<int>>());
+        List<int> list = value.cast<int>();
+        expect(list.isEmpty, true);
+      });
     });
 
-    test('List<double>', () {
-      var value = model.getAttribute<List<double>>('attribute_list_double');
-      expect(value, isA<List<double>>());
+    group('List<double>', () {
+      test('non-null', () {
+        var value = model.getAttribute<List<double>>('attribute_list_double');
+        expect(value, isA<List<double>>());
+        List<double> list = value.cast<double>();
+        expect(list.length, 2);
+      });
+
+      test('null', () {
+        var value = model.getAttribute<List<double>>('null_attribute');
+        expect(value, isA<List<double>>());
+        List<double> list = value.cast<double>();
+        expect(list.isEmpty, true);
+      });
     });
   });
 }
