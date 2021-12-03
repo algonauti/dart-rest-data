@@ -79,6 +79,14 @@ var address = Address(await adapter.find('addresses', '1'));
 
 Will send the request: `GET /addresses/1`.
 
+#### Retrieving a relationship
+
+```dart
+var address = Address(await adapter.find('addresses', '1', queryParams: {'include', 'state'}));
+```
+
+Will send the request: `GET /addresses/1?include=state`.
+
 #### Finding all records
 
 ```dart

@@ -9,10 +9,10 @@ abstract class Adapter {
 
   Adapter(this.serializer);
 
-  Future<Object> find(String endpoint, String id, {bool forceReload = false});
+  Future<Object> find(String endpoint, String id, {bool forceReload = false, Map<String, String> queryParams});
   Future<Iterable<Object>> findMany(String endpoint, Iterable<String> ids,
-      {bool forceReload = false});
-  Future<Iterable<Object>> findAll(String endpoint);
+      {bool forceReload = false, Map<String, String> queryParams});
+  Future<Iterable<Object>> findAll(String endpoint, {Map<String, String> queryParams});
   Future<Iterable<Object>> query(String endpoint, Map<String, String> params);
   Future<Object> save(String endpoint, Object document);
   Future<void> delete(String endpoint, Object document);
