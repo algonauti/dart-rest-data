@@ -216,6 +216,16 @@ class JsonApiDocument {
             record['type'], record['attributes'], record['relationships']));
   }
 
+  JsonApiDocument? includedDoc(String type) {
+    var id = idFor(type);
+    var it = included
+        .where((record) => record['type'] == type && record['id'] == id)
+        .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
+        record['type'], record['attributes'], record['relationships']));
+
+    return it.isNotEmpty ? it.first : null;
+  }
+
   bool attributeHasErrors(String attributeName) => hasErrors
       ? errors.any((error) =>
           _isAttributeError(error, attributeName) && _hasErrorDetail(error))

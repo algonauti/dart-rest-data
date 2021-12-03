@@ -63,6 +63,9 @@ class JsonApiModel with EquatableMixin implements Model {
           [Iterable<String>? ids]) =>
       jsonApiDoc.includedDocs(type, ids);
 
+  JsonApiDocument? includedDoc(String type) =>
+      jsonApiDoc.includedDoc(type);
+
   bool attributeHasErrors(String attributeName) =>
       jsonApiDoc.attributeHasErrors(attributeName);
 
