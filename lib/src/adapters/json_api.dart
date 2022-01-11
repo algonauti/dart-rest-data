@@ -20,7 +20,8 @@ class JsonApiAdapter extends Adapter with Http {
 
   @override
   Future<JsonApiDocument> find(String endpoint, String id,
-      {bool forceReload = false, Map<String, String> queryParams = const {}}) async {
+      {bool forceReload = false,
+      Map<String, String> queryParams = const {}}) async {
     if (forceReload == true || queryParams.isNotEmpty) {
       return fetchAndCache(endpoint, id, queryParams);
     }
@@ -32,21 +33,25 @@ class JsonApiAdapter extends Adapter with Http {
     }
   }
 
-  Future<JsonApiDocument> fetchAndCache(String endpoint, String id, Map<String, String> queryParams) async {
+  Future<JsonApiDocument> fetchAndCache(
+      String endpoint, String id, Map<String, String> queryParams) async {
     JsonApiDocument fetched = await fetch(endpoint, id, queryParams);
     cache(endpoint, fetched);
     return fetched;
   }
 
-  Future<JsonApiDocument> fetch(String endpoint, String id, Map<String, String> queryParams) async {
-    final response = await httpGet("$apiPath/$endpoint/$id", queryParams: queryParams);
+  Future<JsonApiDocument> fetch(
+      String endpoint, String id, Map<String, String> queryParams) async {
+    final response =
+        await httpGet("$apiPath/$endpoint/$id", queryParams: queryParams);
     String payload = checkAndDecode(response) ?? '{}';
     return serializer.deserialize(payload) as JsonApiDocument;
   }
 
   @override
   Future<JsonApiManyDocument> findMany(String endpoint, Iterable<String> ids,
-      {bool forceReload = false, Map<String, String> queryParams = const {}}) async {
+      {bool forceReload = false,
+      Map<String, String> queryParams = const {}}) async {
     if (ids.isEmpty) {
       return Future.value(JsonApiManyDocument(<JsonApiDocument>[]));
     }
@@ -73,8 +78,12 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  Future<JsonApiManyDocument> findAll(String endpoint, {Map<String, String> queryParams = const {}}) async {
-    final response = await httpGet("$apiPath/$endpoint", queryParams: queryParams);
+  Future<JsonApiManyDocument> findAll(
+    String endpoint, {
+    Map<String, String> queryParams = const {},
+  }) async {
+    final response =
+        await httpGet("$apiPath/$endpoint", queryParams: queryParams);
     String payload = checkAndDecode(response) ?? '{}';
     return _deserializeAndCacheMany(payload, endpoint);
   }
@@ -206,9 +215,7 @@ class JsonApiAdapter extends Adapter with Http {
   @override
   void clearCache() {
     _cache.values.forEach((docCache) {
-      if (docCache is Map) {
-        docCache.clear();
-      }
+      docCache.clear();
     });
     _cache.clear();
   }
