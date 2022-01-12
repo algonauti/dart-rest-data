@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
+
 import '../exceptions.dart';
 import '../interfaces.dart';
 
@@ -221,10 +223,16 @@ class JsonApiDocument {
     var it = included
         .where((record) => record['type'] == type && record['id'] == id)
         .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
-        record['type'], record['attributes'], record['relationships']));
+            record['type'], record['attributes'], record['relationships']));
 
     return it.isNotEmpty ? it.first : null;
   }
+
+  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
+      includedDocs(relationshipName)
+          .map((jsonApiDoc) => jsonApiDoc.idFor(modelType))
+          .whereNotNull()
+          .toSet();
 
   bool attributeHasErrors(String attributeName) => hasErrors
       ? errors.any((error) =>
@@ -300,4 +308,10 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
       .where((record) => record['type'] == type)
       .map((record) => JsonApiDocument(record['id'], record['type'],
           record['attributes'], record['relationships']));
+
+  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
+      includedDocs(relationshipName)
+          .map((jsonApiDoc) => jsonApiDoc.idFor(modelType))
+          .whereNotNull()
+          .toSet();
 }
