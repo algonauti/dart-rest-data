@@ -63,12 +63,12 @@ class JsonApiDocument {
   String? type;
   Map<String, dynamic> attributes;
   Map<String, dynamic> relationships;
-  Iterable<dynamic> included;
+  List<dynamic> included;
   List<dynamic> errors;
 
   JsonApiDocument(
       this.id, this.type, this.attributes, Map<String, dynamic>? relationships,
-      [Iterable<dynamic>? included = null])
+      [List<dynamic>? included = null])
       : errors = [],
         this.relationships = relationships ?? {},
         this.included = included ?? [];
