@@ -21,12 +21,15 @@ class JsonApiSerializer implements Serializer {
   @override
   JsonApiManyDocument deserializeMany(String payload) {
     Map<String, dynamic> parsed = parse(payload);
-    var docs = (parsed['data'] as Iterable).map((item) => JsonApiDocument(
-        item['id'],
-        item['type'],
-        item['attributes'],
-        item['relationships'],
-        parsed['included']));
+    var docs = (parsed['data'] as List)
+        .map((item) => JsonApiDocument(
+              item['id'],
+              item['type'],
+              item['attributes'],
+              item['relationships'],
+              parsed['included'],
+            ))
+        .toList();
     return JsonApiManyDocument(docs, parsed['included'], parsed['meta']);
   }
 
@@ -272,13 +275,13 @@ class JsonApiDocument {
 typedef FilterFunction = bool Function(JsonApiDocument);
 
 class JsonApiManyDocument extends Iterable<JsonApiDocument> {
-  Iterable<JsonApiDocument> docs;
-  Iterable<dynamic> included;
+  List<JsonApiDocument> docs;
+  List<dynamic> included;
   Map<String, dynamic> meta;
 
   JsonApiManyDocument(
     this.docs, [
-    Iterable<dynamic>? included,
+    List<dynamic>? included,
     Map<String, dynamic>? meta,
   ])  : this.meta = meta ?? Map<String, dynamic>(),
         this.included = included ?? [];
@@ -286,12 +289,12 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   @override
   Iterator<JsonApiDocument> get iterator => docs.iterator;
 
-  void append(Iterable<JsonApiDocument> moreDocs) {
-    docs = docs.followedBy(moreDocs);
+  void append(List<JsonApiDocument> moreDocs) {
+    docs = docs.followedBy(moreDocs).toList();
   }
 
   void filter(FilterFunction filterFn) {
-    docs = docs.where(filterFn);
+    docs = docs.where(filterFn).toList();
   }
 
   Iterable<String> idsForHasOne(String relationshipName) => docs
