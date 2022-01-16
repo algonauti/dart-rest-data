@@ -15,7 +15,7 @@ abstract class Adapter {
     bool forceReload = false,
     Map<String, String> queryParams,
   });
-  Future<Iterable<Object>> findMany(String endpoint, Iterable<String> ids,
+  Future<Iterable<Object>> findMany(String endpoint, List<String> ids,
       {bool forceReload = false, Map<String, String> queryParams});
   Future<Iterable<Object>> findAll(String endpoint,
       {Map<String, String> queryParams});
@@ -31,7 +31,7 @@ abstract class Adapter {
   void clearCache();
   void cacheMany(String endpoint, Iterable<Object> documents);
   Object? peek(String endpoint, String id);
-  Iterable<Object> peekMany(String endpoint, Iterable<String> ids);
+  Iterable<Object> peekMany(String endpoint, List<String> ids);
   Iterable<Object> peekAll(String endpoint);
 }
 
