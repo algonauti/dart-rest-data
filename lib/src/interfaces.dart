@@ -29,7 +29,7 @@ abstract class Adapter {
   void unCache(String endpoint, Object document);
   void unCacheAll(String endpoint);
   void clearCache();
-  void cacheMany(String endpoint, Iterable<Object> documents);
+  void cacheMany(String endpoint, List<Object> documents);
   Object? peek(String endpoint, String id);
   Iterable<Object> peekMany(String endpoint, List<String> ids);
   Iterable<Object> peekAll(String endpoint);
