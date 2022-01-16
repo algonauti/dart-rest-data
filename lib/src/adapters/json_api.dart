@@ -99,7 +99,7 @@ class JsonApiAdapter extends Adapter with Http {
       String payload, String endpoint) {
     JsonApiManyDocument fetched =
         serializer.deserializeMany(payload) as JsonApiManyDocument;
-    cacheMany(endpoint, fetched);
+    cacheMany(endpoint, fetched.toList());
     return fetched;
   }
 
@@ -221,7 +221,7 @@ class JsonApiAdapter extends Adapter with Http {
   }
 
   @override
-  void cacheMany(String endpoint, Iterable<Object> documents) {
+  void cacheMany(String endpoint, List<Object> documents) {
     documents.forEach((document) => cache(endpoint, document));
   }
 
