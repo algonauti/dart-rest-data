@@ -21,15 +21,12 @@ class JsonApiSerializer implements Serializer {
   @override
   JsonApiManyDocument deserializeMany(String payload) {
     Map<String, dynamic> parsed = parse(payload);
-    var docs = (parsed['data'] as List)
-        .map((item) => JsonApiDocument(
-              item['id'],
-              item['type'],
-              item['attributes'],
-              item['relationships'],
-              parsed['included'],
-            ))
-        .toList();
+    var docs = (parsed['data'] as Iterable).map((item) => JsonApiDocument(
+        item['id'],
+        item['type'],
+        item['attributes'],
+        item['relationships'],
+        parsed['included']));
     return JsonApiManyDocument(docs, parsed['included'], parsed['meta']);
   }
 
@@ -275,7 +272,7 @@ class JsonApiDocument {
 typedef FilterFunction = bool Function(JsonApiDocument);
 
 class JsonApiManyDocument extends Iterable<JsonApiDocument> {
-  List<JsonApiDocument> docs;
+  Iterable<JsonApiDocument> docs;
   List<dynamic> included;
   Map<String, dynamic> meta;
 
