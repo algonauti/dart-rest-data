@@ -26,8 +26,9 @@ class JsonApiSerializer implements Serializer {
         item['type'],
         item['attributes'],
         item['relationships'],
-        parsed['included']));
-    return JsonApiManyDocument(docs, parsed['included'], parsed['meta']);
+        List.from(parsed['included'])));
+    return JsonApiManyDocument(
+        docs, List.from(parsed['included']), parsed['meta']);
   }
 
   @override
