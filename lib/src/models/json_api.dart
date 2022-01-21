@@ -56,7 +56,7 @@ class JsonApiModel with EquatableMixin implements Model {
   String? typeFor(String relationshipName) =>
       jsonApiDoc.typeFor(relationshipName);
 
-  Iterable<String> idsFor(String relationshipName) =>
+  List<String> idsFor(String relationshipName) =>
       jsonApiDoc.idsFor(relationshipName);
 
   Iterable<JsonApiDocument> includedDocs(String type,
@@ -65,13 +65,13 @@ class JsonApiModel with EquatableMixin implements Model {
 
   JsonApiDocument? includedDoc(String type) => jsonApiDoc.includedDoc(type);
 
-  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
+  List<String> includedIdsFor(String relationshipName, String modelType) =>
       jsonApiDoc.includedIdsFor(relationshipName, modelType);
 
   bool attributeHasErrors(String attributeName) =>
       jsonApiDoc.attributeHasErrors(attributeName);
 
-  Iterable<String> errorsFor(String attributeName) =>
+  List<String> errorsFor(String attributeName) =>
       jsonApiDoc.errorsFor(attributeName);
 
   void clearErrorsFor(String attributeName) {
@@ -130,6 +130,6 @@ abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
   Iterable<JsonApiDocument> includedDocs(String type) =>
       manyDoc.includedDocs(type);
 
-  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
+  List<String> includedIdsFor(String relationshipName, String modelType) =>
       manyDoc.includedIdsFor(relationshipName, modelType);
 }
