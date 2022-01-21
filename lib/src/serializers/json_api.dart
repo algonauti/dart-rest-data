@@ -296,15 +296,15 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
     docs = docs.where(filterFn).toList();
   }
 
-  Iterable<String> idsForHasOne(String relationshipName) => docs
+  List<String> idsForHasOne(String relationshipName) => List<String>.from(docs
       .map((doc) => doc.idFor(relationshipName))
       .whereType<String>()
-      .toSet();
+      .toSet());
 
-  Iterable<String> idsForHasMany(String relationshipName) => docs
+  List<String> idsForHasMany(String relationshipName) => List<String>.from(docs
       .map((doc) => doc.idsFor(relationshipName))
       .expand((ids) => ids)
-      .toSet();
+      .toSet());
 
   Iterable<JsonApiDocument> includedDocs(String type) => included
       .where((record) => record['type'] == type)
