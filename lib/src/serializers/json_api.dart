@@ -184,9 +184,10 @@ class JsonApiDocument {
   Iterable<dynamic> dataForHasMany(String relationshipName) =>
       relationships[relationshipName]['data'] ?? [];
 
-  Iterable<String> idsFor(String relationshipName) =>
+  List<String> idsFor(String relationshipName) =>
       relationships.containsKey(relationshipName)
-          ? dataForHasMany(relationshipName).map((record) => record['id'])
+          ? List<String>.from(
+              dataForHasMany(relationshipName).map((record) => record['id']))
           : <String>[];
 
   void setHasOne(String relationshipName, String modelId, String modelType) {
@@ -229,20 +230,20 @@ class JsonApiDocument {
     return it.isNotEmpty ? it.first : null;
   }
 
-  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
-      includedDocs(relationshipName)
+  List<String> includedIdsFor(String relationshipName, String modelType) =>
+      List<String>.from(includedDocs(relationshipName)
           .map((jsonApiDoc) => jsonApiDoc.idFor(modelType))
           .whereNotNull()
-          .toSet();
+          .toSet());
 
   bool attributeHasErrors(String attributeName) => hasErrors
       ? errors.any((error) =>
           _isAttributeError(error, attributeName) && _hasErrorDetail(error))
       : false;
 
-  Iterable<String> errorsFor(String attributeName) => errors
+  List<String> errorsFor(String attributeName) => List<String>.from(errors
       .where((error) => _isAttributeError(error, attributeName))
-      .map((error) => error['detail']);
+      .map((error) => error['detail']));
 
   void clearErrorsFor(String attributeName) {
     errors = errors
@@ -310,9 +311,9 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
       .map((record) => JsonApiDocument(record['id'], record['type'],
           record['attributes'], record['relationships']));
 
-  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
-      includedDocs(relationshipName)
+  List<String> includedIdsFor(String relationshipName, String modelType) =>
+      List<String>.from(includedDocs(relationshipName)
           .map((jsonApiDoc) => jsonApiDoc.idFor(modelType))
           .whereNotNull()
-          .toSet();
+          .toSet());
 }
