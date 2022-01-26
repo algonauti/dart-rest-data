@@ -74,7 +74,7 @@ class JsonApiAdapter extends Adapter with Http {
     }
   }
 
-  Map<String, String> _idsParam(Iterable<String> ids) {
+  Map<String, String> _idsParam(List<String> ids) {
     return {'filter[id]': ids.join(',')};
   }
 
