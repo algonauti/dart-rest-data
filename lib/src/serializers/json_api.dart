@@ -21,7 +21,7 @@ class JsonApiSerializer implements Serializer {
   @override
   JsonApiManyDocument deserializeMany(String payload) {
     Map<String, dynamic> parsed = parse(payload);
-    var docs = (parsed['data'] as Iterable).map((item) => JsonApiDocument(
+    var docs = (parsed['data']).map((item) => JsonApiDocument(
         item['id'],
         item['type'],
         item['attributes'],
@@ -181,7 +181,7 @@ class JsonApiDocument {
   String? typeFor(String relationshipName) =>
       dataForHasOne(relationshipName)['type'];
 
-  Iterable<dynamic> dataForHasMany(String relationshipName) =>
+  List<dynamic> dataForHasMany(String relationshipName) =>
       relationships[relationshipName]['data'] ?? [];
 
   List<String> idsFor(String relationshipName) =>
@@ -274,7 +274,7 @@ class JsonApiDocument {
 typedef FilterFunction = bool Function(JsonApiDocument);
 
 class JsonApiManyDocument extends Iterable<JsonApiDocument> {
-  Iterable<JsonApiDocument> docs;
+  List<JsonApiDocument> docs;
   List<dynamic> included;
   Map<String, dynamic> meta;
 
