@@ -211,13 +211,13 @@ class JsonApiDocument {
     }
   }
 
-  Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String>? ids]) {
+  List<JsonApiDocument> includedDocs(String type, [List<String>? ids]) {
     ids ??= idsFor(type);
-    return included
+    return List<JsonApiDocument>.from(included
         .where(
             (record) => record['type'] == type && ids!.contains(record['id']))
         .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
-            record['type'], record['attributes'], record['relationships']));
+            record['type'], record['attributes'], record['relationships'])));
   }
 
   JsonApiDocument? includedDoc(String type) {
@@ -306,10 +306,11 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
       .expand((ids) => ids)
       .toSet());
 
-  Iterable<JsonApiDocument> includedDocs(String type) => included
-      .where((record) => record['type'] == type)
-      .map((record) => JsonApiDocument(record['id'], record['type'],
-          record['attributes'], record['relationships']));
+  List<JsonApiDocument> includedDocs(String type) =>
+      List<JsonApiDocument>.from(included
+          .where((record) => record['type'] == type)
+          .map((record) => JsonApiDocument(record['id'], record['type'],
+              record['attributes'], record['relationships'])));
 
   List<String> includedIdsFor(String relationshipName, String modelType) =>
       List<String>.from(includedDocs(relationshipName)
