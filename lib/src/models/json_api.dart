@@ -29,7 +29,7 @@ class JsonApiModel with EquatableMixin implements Model {
   String get endpoint => jsonApiDoc.endpoint;
   Map<String, dynamic> get attributes => jsonApiDoc.attributes;
   Map<String, dynamic> get relationships => jsonApiDoc.relationships;
-  Iterable<dynamic> get included => jsonApiDoc.included;
+  List<dynamic> get included => jsonApiDoc.included;
   List<dynamic> get errors => jsonApiDoc.errors;
 
   @override
@@ -113,7 +113,7 @@ class JsonApiModel with EquatableMixin implements Model {
 
 abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
   JsonApiManyDocument manyDoc;
-  late Iterable<T> models;
+  late List<T> models;
 
   JsonApiManyModel(this.manyDoc);
 
