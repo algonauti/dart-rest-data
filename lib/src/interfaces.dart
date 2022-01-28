@@ -27,6 +27,7 @@ abstract class Adapter {
 
   void cache(String endpoint, Object document);
   void unCache(String endpoint, Object document);
+  void unCacheAll(String endpoint);
   void clearCache();
   void cacheMany(String endpoint, Iterable<Object> documents);
   Object? peek(String endpoint, String id);
