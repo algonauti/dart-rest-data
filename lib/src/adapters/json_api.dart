@@ -56,6 +56,7 @@ class JsonApiAdapter extends Adapter with Http {
       return Future.value(JsonApiManyDocument(<JsonApiDocument>[]));
     }
     if (forceReload == true || queryParams.isNotEmpty) {
+      unCacheAll(endpoint);
       return await query(endpoint, {...queryParams, ..._idsParam(ids)});
     }
     JsonApiManyDocument cached = peekMany(endpoint, ids);
@@ -82,10 +83,8 @@ class JsonApiAdapter extends Adapter with Http {
     String endpoint, {
     Map<String, String> queryParams = const {},
   }) async {
-    final response =
-        await httpGet("$apiPath/$endpoint", queryParams: queryParams);
-    String payload = checkAndDecode(response) ?? '{}';
-    return _deserializeAndCacheMany(payload, endpoint);
+    unCacheAll(endpoint);
+    return query(endpoint, queryParams);
   }
 
   @override
@@ -209,6 +208,14 @@ class JsonApiAdapter extends Adapter with Http {
       }
     } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
+    }
+  }
+
+  @override
+  void unCacheAll(String endpoint) {
+    Map? docCache = _cache[endpoint];
+    if (docCache != null) {
+      docCache.clear();
     }
   }
 
