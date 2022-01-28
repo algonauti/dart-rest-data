@@ -82,10 +82,8 @@ class JsonApiAdapter extends Adapter with Http {
     String endpoint, {
     Map<String, String> queryParams = const {},
   }) async {
-    final response =
-        await httpGet("$apiPath/$endpoint", queryParams: queryParams);
-    String payload = checkAndDecode(response) ?? '{}';
-    return _deserializeAndCacheMany(payload, endpoint);
+    unCacheAll(endpoint);
+    return query(endpoint, queryParams);
   }
 
   @override
