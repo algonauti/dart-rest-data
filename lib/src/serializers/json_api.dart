@@ -21,14 +21,22 @@ class JsonApiSerializer implements Serializer {
   @override
   JsonApiManyDocument deserializeMany(String payload) {
     Map<String, dynamic> parsed = parse(payload);
-    var docs = (parsed['data']).map((item) => JsonApiDocument(
-        item['id'],
-        item['type'],
-        item['attributes'],
-        item['relationships'],
-        List.from(parsed['included'] ?? [])));
+    var docs = List<JsonApiDocument>.from(
+      List.from(parsed['data']).map(
+        (item) => JsonApiDocument(
+          item['id'],
+          item['type'],
+          item['attributes'],
+          item['relationships'],
+          List.from(parsed['included'] ?? []),
+        ),
+      ),
+    );
     return JsonApiManyDocument(
-        docs, List.from(parsed['included'] ?? []), parsed['meta']);
+      docs,
+      List.from(parsed['included'] ?? []),
+      parsed['meta'],
+    );
   }
 
   @override
