@@ -336,7 +336,12 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
       .expand((ids) => ids)
       .toSet());
 
-  List<JsonApiDocument> includedDocs(String type) =>
+  List<JsonApiDocument> includedDocs(String type) => _docsCache.readOrLoad(
+        key: 'includedDocs:${type}',
+        loader: () => _includedDocs(type),
+      );
+
+  List<JsonApiDocument> _includedDocs(String type) =>
       List<JsonApiDocument>.from(included
           .where((record) => record['type'] == type)
           .map((record) => JsonApiDocument(record['id'], record['type'],
