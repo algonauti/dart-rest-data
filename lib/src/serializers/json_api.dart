@@ -326,3 +326,19 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
           .whereNotNull()
           .toSet());
 }
+
+class _Cache<T> {
+  Map<String, T> _map = Map<String, T>();
+
+  T readOrLoad({
+    required String key,
+    required T Function() loader,
+  }) =>
+      _map[key] ?? _load(key, loader);
+
+  T _load(String key, T Function() loader) {
+    T value = loader();
+    _map[key] = value;
+    return value;
+  }
+}
