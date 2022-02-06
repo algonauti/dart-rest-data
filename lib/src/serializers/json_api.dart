@@ -286,6 +286,8 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   List<JsonApiDocument> docs;
   List<dynamic> included;
   Map<String, dynamic> meta;
+  _Cache<List<String>> _idsCache = _Cache<List<String>>();
+  _Cache<List<JsonApiDocument>> _docsCache = _Cache<List<JsonApiDocument>>();
 
   JsonApiManyDocument(
     this.docs, [
