@@ -244,6 +244,11 @@ class JsonApiDocument {
   }
 
   List<String> includedIdsFor(String relationshipName, String modelType) =>
+      _stringsCache.readOrLoad(
+          key: 'includedIdsFor:${relationshipName}',
+          loader: () => _includedIdsFor(relationshipName, modelType));
+
+  List<String> _includedIdsFor(String relationshipName, String modelType) =>
       List<String>.from(includedDocs(relationshipName)
           .map((jsonApiDoc) => jsonApiDoc.idFor(modelType))
           .whereNotNull()
@@ -338,6 +343,12 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
               record['attributes'], record['relationships'])));
 
   List<String> includedIdsFor(String relationshipName, String modelType) =>
+      _idsCache.readOrLoad(
+        key: 'includedIdsFor:${relationshipName}',
+        loader: () => _includedIdsFor(relationshipName, modelType),
+      );
+
+  List<String> _includedIdsFor(String relationshipName, String modelType) =>
       List<String>.from(includedDocs(relationshipName)
           .map((jsonApiDoc) => jsonApiDoc.idFor(modelType))
           .whereNotNull()
