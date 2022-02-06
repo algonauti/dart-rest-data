@@ -193,7 +193,11 @@ class JsonApiDocument {
   List<dynamic> dataForHasMany(String relationshipName) =>
       relationships[relationshipName]['data'] ?? [];
 
-  List<String> idsFor(String relationshipName) =>
+  List<String> idsFor(String relationshipName) => _stringsCache.readOrLoad(
+      key: 'idsFor:${relationshipName}',
+      loader: () => _idsFor(relationshipName));
+
+  List<String> _idsFor(String relationshipName) =>
       relationships.containsKey(relationshipName)
           ? List<String>.from(
               dataForHasMany(relationshipName).map((record) => record['id']))
@@ -307,12 +311,22 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
     docs = docs.where(filterFn).toList();
   }
 
-  List<String> idsForHasOne(String relationshipName) => List<String>.from(docs
+  List<String> idsForHasOne(String relationshipName) => _idsCache.readOrLoad(
+        key: 'idsForHasOne:${relationshipName}',
+        loader: () => _idsForHasOne(relationshipName),
+      );
+
+  List<String> _idsForHasOne(String relationshipName) => List<String>.from(docs
       .map((doc) => doc.idFor(relationshipName))
       .whereType<String>()
       .toSet());
 
-  List<String> idsForHasMany(String relationshipName) => List<String>.from(docs
+  List<String> idsForHasMany(String relationshipName) => _idsCache.readOrLoad(
+        key: 'idsForHasMany:${relationshipName}',
+        loader: () => _idsForHasMany(relationshipName),
+      );
+
+  List<String> _idsForHasMany(String relationshipName) => List<String>.from(docs
       .map((doc) => doc.idsFor(relationshipName))
       .expand((ids) => ids)
       .toSet());
