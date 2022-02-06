@@ -74,6 +74,7 @@ class JsonApiDocument {
   Map<String, dynamic> relationships;
   List<dynamic> included;
   List<dynamic> errors;
+  _Cache<List<String>> _stringsCache = _Cache<List<String>>();
 
   JsonApiDocument(
       this.id, this.type, this.attributes, Map<String, dynamic>? relationships,
