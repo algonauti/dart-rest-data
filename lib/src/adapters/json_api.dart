@@ -23,24 +23,24 @@ class JsonApiAdapter extends Adapter with Http {
       {bool forceReload = false,
       Map<String, String> queryParams = const {}}) async {
     if (forceReload == true || queryParams.isNotEmpty) {
-      return fetchAndCache(endpoint, id, queryParams);
+      return _fetchAndCache(endpoint, id, queryParams);
     }
     JsonApiDocument? cached = peek(endpoint, id);
     if (cached != null) {
       return cached;
     } else {
-      return fetchAndCache(endpoint, id, queryParams);
+      return _fetchAndCache(endpoint, id, queryParams);
     }
   }
 
-  Future<JsonApiDocument> fetchAndCache(
+  Future<JsonApiDocument> _fetchAndCache(
       String endpoint, String id, Map<String, String> queryParams) async {
-    JsonApiDocument fetched = await fetch(endpoint, id, queryParams);
+    JsonApiDocument fetched = await _fetch(endpoint, id, queryParams);
     cache(endpoint, fetched);
     return fetched;
   }
 
-  Future<JsonApiDocument> fetch(
+  Future<JsonApiDocument> _fetch(
       String endpoint, String id, Map<String, String> queryParams) async {
     final response =
         await httpGet("$apiPath/$endpoint/$id", queryParams: queryParams);
