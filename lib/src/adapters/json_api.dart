@@ -23,24 +23,24 @@ class JsonApiAdapter extends Adapter with Http {
       {bool forceReload = false,
       Map<String, String> queryParams = const {}}) async {
     if (forceReload == true || queryParams.isNotEmpty) {
-      return fetchAndCache(endpoint, id, queryParams);
+      return _fetchAndCache(endpoint, id, queryParams);
     }
     JsonApiDocument? cached = peek(endpoint, id);
     if (cached != null) {
       return cached;
     } else {
-      return fetchAndCache(endpoint, id, queryParams);
+      return _fetchAndCache(endpoint, id, queryParams);
     }
   }
 
-  Future<JsonApiDocument> fetchAndCache(
+  Future<JsonApiDocument> _fetchAndCache(
       String endpoint, String id, Map<String, String> queryParams) async {
-    JsonApiDocument fetched = await fetch(endpoint, id, queryParams);
+    JsonApiDocument fetched = await _fetch(endpoint, id, queryParams);
     cache(endpoint, fetched);
     return fetched;
   }
 
-  Future<JsonApiDocument> fetch(
+  Future<JsonApiDocument> _fetch(
       String endpoint, String id, Map<String, String> queryParams) async {
     final response =
         await httpGet("$apiPath/$endpoint/$id", queryParams: queryParams);
@@ -139,18 +139,11 @@ class JsonApiAdapter extends Adapter with Http {
     try {
       unCache(endpoint, document);
       JsonApiDocument jsonApiDoc = (document as JsonApiDocument);
-      await performDelete(endpoint, jsonApiDoc);
+      final response = await httpDelete("$apiPath/$endpoint/${jsonApiDoc.id}");
+      checkAndDecode(response);
     } on TypeError {
       throw ArgumentError('document must be a JsonApiDocument');
     }
-  }
-
-  Future<void> performDelete(
-    String endpoint,
-    JsonApiDocument jsonApiDoc,
-  ) async {
-    final response = await httpDelete("$apiPath/$endpoint/${jsonApiDoc.id}");
-    checkAndDecode(response);
   }
 
   @override
