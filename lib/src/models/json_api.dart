@@ -29,7 +29,7 @@ class JsonApiModel with EquatableMixin implements Model {
   String get endpoint => jsonApiDoc.endpoint;
   Map<String, dynamic> get attributes => jsonApiDoc.attributes;
   Map<String, dynamic> get relationships => jsonApiDoc.relationships;
-  Iterable<dynamic> get included => jsonApiDoc.included;
+  List<dynamic> get included => jsonApiDoc.included;
   List<dynamic> get errors => jsonApiDoc.errors;
 
   @override
@@ -56,22 +56,21 @@ class JsonApiModel with EquatableMixin implements Model {
   String? typeFor(String relationshipName) =>
       jsonApiDoc.typeFor(relationshipName);
 
-  Iterable<String> idsFor(String relationshipName) =>
+  List<String> idsFor(String relationshipName) =>
       jsonApiDoc.idsFor(relationshipName);
 
-  Iterable<JsonApiDocument> includedDocs(String type,
-          [Iterable<String>? ids]) =>
+  List<JsonApiDocument> includedDocs(String type, [List<String>? ids]) =>
       jsonApiDoc.includedDocs(type, ids);
 
   JsonApiDocument? includedDoc(String type) => jsonApiDoc.includedDoc(type);
 
-  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
+  List<String> includedIdsFor(String relationshipName, String modelType) =>
       jsonApiDoc.includedIdsFor(relationshipName, modelType);
 
   bool attributeHasErrors(String attributeName) =>
       jsonApiDoc.attributeHasErrors(attributeName);
 
-  Iterable<String> errorsFor(String attributeName) =>
+  List<String> errorsFor(String attributeName) =>
       jsonApiDoc.errorsFor(attributeName);
 
   void clearErrorsFor(String attributeName) {
@@ -114,7 +113,7 @@ class JsonApiModel with EquatableMixin implements Model {
 
 abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
   JsonApiManyDocument manyDoc;
-  late Iterable<T> models;
+  late List<T> models;
 
   JsonApiManyModel(this.manyDoc);
 
@@ -127,9 +126,8 @@ abstract class JsonApiManyModel<T extends JsonApiModel> extends Iterable<T> {
   int? get totalPages => manyDoc.meta['total_pages'];
   int? get totalCount => manyDoc.meta['total_count'];
 
-  Iterable<JsonApiDocument> includedDocs(String type) =>
-      manyDoc.includedDocs(type);
+  List<JsonApiDocument> includedDocs(String type) => manyDoc.includedDocs(type);
 
-  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
+  List<String> includedIdsFor(String relationshipName, String modelType) =>
       manyDoc.includedIdsFor(relationshipName, modelType);
 }

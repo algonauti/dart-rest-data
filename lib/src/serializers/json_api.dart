@@ -21,13 +21,22 @@ class JsonApiSerializer implements Serializer {
   @override
   JsonApiManyDocument deserializeMany(String payload) {
     Map<String, dynamic> parsed = parse(payload);
-    var docs = (parsed['data'] as Iterable).map((item) => JsonApiDocument(
-        item['id'],
-        item['type'],
-        item['attributes'],
-        item['relationships'],
-        parsed['included']));
-    return JsonApiManyDocument(docs, parsed['included'], parsed['meta']);
+    var docs = List<JsonApiDocument>.from(
+      List.from(parsed['data']).map(
+        (item) => JsonApiDocument(
+          item['id'],
+          item['type'],
+          item['attributes'],
+          item['relationships'],
+          List.from(parsed['included'] ?? []),
+        ),
+      ),
+    );
+    return JsonApiManyDocument(
+      docs,
+      List.from(parsed['included'] ?? []),
+      parsed['meta'],
+    );
   }
 
   @override
@@ -63,12 +72,13 @@ class JsonApiDocument {
   String? type;
   Map<String, dynamic> attributes;
   Map<String, dynamic> relationships;
-  Iterable<dynamic> included;
+  List<dynamic> included;
   List<dynamic> errors;
+  _Cache<List<String>> _stringsCache = _Cache<List<String>>();
 
   JsonApiDocument(
       this.id, this.type, this.attributes, Map<String, dynamic>? relationships,
-      [Iterable<dynamic>? included = null])
+      [List<dynamic>? included = null])
       : errors = [],
         this.relationships = relationships ?? {},
         this.included = included ?? [];
@@ -180,12 +190,17 @@ class JsonApiDocument {
   String? typeFor(String relationshipName) =>
       dataForHasOne(relationshipName)['type'];
 
-  Iterable<dynamic> dataForHasMany(String relationshipName) =>
+  List<dynamic> dataForHasMany(String relationshipName) =>
       relationships[relationshipName]['data'] ?? [];
 
-  Iterable<String> idsFor(String relationshipName) =>
+  List<String> idsFor(String relationshipName) => _stringsCache.readOrLoad(
+      key: 'idsFor:${relationshipName}',
+      loader: () => _idsFor(relationshipName));
+
+  List<String> _idsFor(String relationshipName) =>
       relationships.containsKey(relationshipName)
-          ? dataForHasMany(relationshipName).map((record) => record['id'])
+          ? List<String>.from(
+              dataForHasMany(relationshipName).map((record) => record['id']))
           : <String>[];
 
   void setHasOne(String relationshipName, String modelId, String modelType) {
@@ -209,13 +224,13 @@ class JsonApiDocument {
     }
   }
 
-  Iterable<JsonApiDocument> includedDocs(String type, [Iterable<String>? ids]) {
+  List<JsonApiDocument> includedDocs(String type, [List<String>? ids]) {
     ids ??= idsFor(type);
-    return included
+    return List<JsonApiDocument>.from(included
         .where(
             (record) => record['type'] == type && ids!.contains(record['id']))
         .map<JsonApiDocument>((record) => JsonApiDocument(record['id'],
-            record['type'], record['attributes'], record['relationships']));
+            record['type'], record['attributes'], record['relationships'])));
   }
 
   JsonApiDocument? includedDoc(String type) {
@@ -228,20 +243,29 @@ class JsonApiDocument {
     return it.isNotEmpty ? it.first : null;
   }
 
-  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
-      includedDocs(relationshipName)
+  List<String> includedIdsFor(String relationshipName, String modelType) =>
+      _stringsCache.readOrLoad(
+          key: 'includedIdsFor:${relationshipName}',
+          loader: () => _includedIdsFor(relationshipName, modelType));
+
+  List<String> _includedIdsFor(String relationshipName, String modelType) =>
+      List<String>.from(includedDocs(relationshipName)
           .map((jsonApiDoc) => jsonApiDoc.idFor(modelType))
           .whereNotNull()
-          .toSet();
+          .toSet());
 
   bool attributeHasErrors(String attributeName) => hasErrors
       ? errors.any((error) =>
           _isAttributeError(error, attributeName) && _hasErrorDetail(error))
       : false;
 
-  Iterable<String> errorsFor(String attributeName) => errors
+  List<String> errorsFor(String attributeName) => _stringsCache.readOrLoad(
+      key: 'errorsFor:${attributeName}',
+      loader: () => _errorsFor(attributeName));
+
+  List<String> _errorsFor(String attributeName) => List<String>.from(errors
       .where((error) => _isAttributeError(error, attributeName))
-      .map((error) => error['detail']);
+      .map((error) => error['detail']));
 
   void clearErrorsFor(String attributeName) {
     errors = errors
@@ -272,13 +296,15 @@ class JsonApiDocument {
 typedef FilterFunction = bool Function(JsonApiDocument);
 
 class JsonApiManyDocument extends Iterable<JsonApiDocument> {
-  Iterable<JsonApiDocument> docs;
-  Iterable<dynamic> included;
+  List<JsonApiDocument> docs;
+  List<dynamic> included;
   Map<String, dynamic> meta;
+  _Cache<List<String>> _idsCache = _Cache<List<String>>();
+  _Cache<List<JsonApiDocument>> _docsCache = _Cache<List<JsonApiDocument>>();
 
   JsonApiManyDocument(
     this.docs, [
-    Iterable<dynamic>? included,
+    List<dynamic>? included,
     Map<String, dynamic>? meta,
   ])  : this.meta = meta ?? Map<String, dynamic>(),
         this.included = included ?? [];
@@ -286,32 +312,70 @@ class JsonApiManyDocument extends Iterable<JsonApiDocument> {
   @override
   Iterator<JsonApiDocument> get iterator => docs.iterator;
 
-  void append(Iterable<JsonApiDocument> moreDocs) {
-    docs = docs.followedBy(moreDocs);
+  void append(List<JsonApiDocument> moreDocs) {
+    docs = docs.followedBy(moreDocs).toList();
   }
 
   void filter(FilterFunction filterFn) {
-    docs = docs.where(filterFn);
+    docs = docs.where(filterFn).toList();
   }
 
-  Iterable<String> idsForHasOne(String relationshipName) => docs
+  List<String> idsForHasOne(String relationshipName) => _idsCache.readOrLoad(
+        key: 'idsForHasOne:${relationshipName}',
+        loader: () => _idsForHasOne(relationshipName),
+      );
+
+  List<String> _idsForHasOne(String relationshipName) => List<String>.from(docs
       .map((doc) => doc.idFor(relationshipName))
       .whereType<String>()
-      .toSet();
+      .toSet());
 
-  Iterable<String> idsForHasMany(String relationshipName) => docs
+  List<String> idsForHasMany(String relationshipName) => _idsCache.readOrLoad(
+        key: 'idsForHasMany:${relationshipName}',
+        loader: () => _idsForHasMany(relationshipName),
+      );
+
+  List<String> _idsForHasMany(String relationshipName) => List<String>.from(docs
       .map((doc) => doc.idsFor(relationshipName))
       .expand((ids) => ids)
-      .toSet();
+      .toSet());
 
-  Iterable<JsonApiDocument> includedDocs(String type) => included
-      .where((record) => record['type'] == type)
-      .map((record) => JsonApiDocument(record['id'], record['type'],
-          record['attributes'], record['relationships']));
+  List<JsonApiDocument> includedDocs(String type) => _docsCache.readOrLoad(
+        key: 'includedDocs:${type}',
+        loader: () => _includedDocs(type),
+      );
 
-  Iterable<String> includedIdsFor(String relationshipName, String modelType) =>
-      includedDocs(relationshipName)
+  List<JsonApiDocument> _includedDocs(String type) =>
+      List<JsonApiDocument>.from(included
+          .where((record) => record['type'] == type)
+          .map((record) => JsonApiDocument(record['id'], record['type'],
+              record['attributes'], record['relationships'])));
+
+  List<String> includedIdsFor(String relationshipName, String modelType) =>
+      _idsCache.readOrLoad(
+        key: 'includedIdsFor:${relationshipName}',
+        loader: () => _includedIdsFor(relationshipName, modelType),
+      );
+
+  List<String> _includedIdsFor(String relationshipName, String modelType) =>
+      List<String>.from(includedDocs(relationshipName)
           .map((jsonApiDoc) => jsonApiDoc.idFor(modelType))
           .whereNotNull()
-          .toSet();
+          .toSet());
+}
+
+class _Cache<T> {
+  Map<String, T> _map = Map<String, T>();
+
+  T readOrLoad({
+    required String key,
+    required T Function() loader,
+  }) =>
+      _map[key] ?? _load(key, loader);
+
+  T _load(String key, T Function() loader) {
+    T value = loader();
+    _map[key] = value;
+    return value;
+  }
 }
