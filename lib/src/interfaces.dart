@@ -41,4 +41,6 @@ abstract class Model {
   String serialize();
   T getAttribute<T>(String key);
   void setAttribute<T>(String key, T value);
+  void unsetAttribute(String key);
+  void nullifyAttribute(String key);
 }
