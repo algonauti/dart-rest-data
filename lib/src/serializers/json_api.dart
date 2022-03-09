@@ -177,6 +177,14 @@ class JsonApiDocument {
     attributes[key] = rawValue;
   }
 
+  void unsetAttribute(String key) {
+    attributes.remove(key);
+  }
+
+  void nullifyAttribute(String key) {
+    attributes[key] = null;
+  }
+
   bool get hasErrors => errors.isNotEmpty;
 
   Map<String, dynamic> dataForHasOne(String relationshipName) =>

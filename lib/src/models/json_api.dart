@@ -46,6 +46,16 @@ class JsonApiModel with EquatableMixin implements Model {
       jsonApiDoc.setAttribute<T>(key, value);
 
   @override
+  void unsetAttribute(String key) {
+    jsonApiDoc.unsetAttribute(key);
+  }
+
+  @override
+  void nullifyAttribute(String key) {
+    jsonApiDoc.nullifyAttribute(key);
+  }
+
+  @override
   String serialize() => JsonApiSerializer().serialize(jsonApiDoc);
 
   bool get isNew => jsonApiDoc.isNew;
